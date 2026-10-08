@@ -287,16 +287,22 @@ function editPlayerName(index) {
 }
 
 function setup() {
-  let html = '<div class="row">';
+  let html = '<div class="row"><span class="m">Tee</span>';
   ['Black', 'White', 'Red'].forEach((tee) => {
-    html += '<button class="chip ' + (state.tee === tee ? 'on' : '') + '" data-a="tee" data-v="' + tee + '" aria-label="Select ' + tee + ' tee">' + tee + (tee === 'Red' ? ' (L)' : '') + '<br><small>' + DISTANCES[tee][0] + ' m</small></button>';
+    html += '<button class="chip ' + (state.tee === tee ? 'on' : '') + '" data-a="tee" data-v="' + tee + '" aria-label="Select ' + tee + ' tee">' + tee + (tee === 'Red' ? ' (L)' : '') + '</button>';
   });
   html += '</div>';
   
+  html += '<div class="row"><span class="m">Players</span>';
+  for (let i = 1; i <= 4; i++) {
+    html += '<button class="chip ' + (state.n === i ? 'on' : '') + '" data-a="n" data-v="' + i + '" aria-label="Set number of players to ' + i + '">' + i + '</button>';
+  }
+  html += '</div>';
+  
   html += '<div class="players-section">';
-  html += '<h3>Players</h3>';
+  html += '<h3>Player names</h3>';
   html += '<div class="players-list">';
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < state.n; i++) {
     html += '<div class="player-item">';
     html += '<input type="text" data-player="' + i + '" value="' + escapeHtml(state.names[i]) + '" placeholder="Player ' + (i + 1) + '" aria-label="Player ' + (i + 1) + ' name">';
     html += '<button data-a="edit-player" data-v="' + i + '" aria-label="Edit player ' + (i + 1) + ' name" title="Edit">✎</button>';
@@ -305,11 +311,6 @@ function setup() {
   html += '</div>';
   html += '</div>';
   
-  html += '<div class="row"><span class="m">Active players</span>';
-  for (let i = 1; i <= 4; i++) {
-    html += '<button class="chip ' + (state.n === i ? 'on' : '') + '" data-a="n" data-v="' + i + '" aria-label="Set number of players to ' + i + '">' + i + '</button>';
-  }
-  html += '</div>';
   return html;
 }
 
