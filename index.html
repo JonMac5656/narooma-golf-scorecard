@@ -18,6 +18,7 @@ nav button{flex:1;background:transparent;color:#fffc;border:0;border-bottom:3px 
 nav button.on{color:#fff;border-bottom-color:#fff;font-weight:600}
 main{max-width:640px;margin:0 auto;padding:14px 16px 40px}
 button{font:inherit;color:var(--fg)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--hd);outline-offset:2px}
 .row{display:flex;gap:6px;margin-bottom:12px;align-items:center}
 .chip{flex:1;padding:8px 4px;border:1px solid var(--line);background:var(--in);border-radius:8px;cursor:pointer}
 .chip.on{background:var(--hd);color:#fff;border-color:var(--hd)}
@@ -47,98 +48,456 @@ td input{width:42px;padding:5px 2px;text-align:center;border:1px solid var(--lin
 .g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
 .k{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--in)}
 .k b{font-size:22px;display:block}.k span{font-size:12px;color:var(--mut)}
-.bar{display:flex;align-items:center;gap:8px;margin:5px 0}.bar span.l{width:105px;font-size:13px}.bar i{display:block;height:14px;background:var(--hd);border-radius:4px;min-width:2px}.bar em{font-style:normal;font-size:12px;color:var(--mut)}
+.bar{display:flex;align-items:center;gap:8px;margin:5px 0}.bar span.l{width:105px;font-size:13px}.bar i{display:block;height:14px;background:var(--hd);border-radius:4px;min-width:2px}.bar em{font-style:normal}
 .tr{display:flex;align-items:flex-end;gap:4px;height:100px}.tr div{flex:1;background:var(--hd);border-radius:4px 4px 0 0;color:#fff;font-size:11px;text-align:center;padding-top:2px}
 h2{font-size:15px;margin:18px 0 6px}
 .hl{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 0}
 </style>
 </head>
 <body>
-<header><h1>⛳ Narooma Golf Club · Par 72</h1><nav id="nav"></nav></header>
+<header>
+  <h1>⛳ Narooma Golf Club · Par 72</h1>
+  <nav id="nav" aria-label="Main navigation"></nav>
+</header>
 <main id="app"></main>
 <script>
-var par=[4,4,3,4,5,4,4,4,3,4,5,4,4,3,4,5,3,5];
-var D={Black:[398,330,141,368,458,311,424,317,193,320,460,333,369,169,344,427,129,450],
-White:[393,330,132,360,448,301,416,308,184,310,448,323,360,162,325,424,121,445],
-Red:[358,247,109,313,436,291,389,226,144,250,402,280,319,160,296,401,120,411]};
-var SIb=[1,10,11,7,18,15,4,16,3,8,12,9,2,6,5,14,17,13];
-var SI={Black:SIb,White:SIb,Red:[18,8,12,3,14,6,10,1,16,5,11,2,15,7,13,4,17,9]};
-var S={tee:"White",n:2,names:["","","",""],sc:[[],[],[],[]],hole:0,view:"play"};
-var R=[];
-try{var a=JSON.parse(localStorage.getItem("ng_state"));if(a)S=a;var b=JSON.parse(localStorage.getItem("ng_rounds"));if(b)R=b}catch(e){}
-function save(){try{localStorage.setItem("ng_state",JSON.stringify(S));localStorage.setItem("ng_rounds",JSON.stringify(R))}catch(e){}}
-function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
-function nm(p){return S.names[p]||"Player "+(p+1)}
-function sum(a,f,t){var s=0;for(var i=f;i<t;i++)s+=a[i]||0;return s}
-function T(arr,f,t){var s=0,pp=0;for(var i=f;i<t;i++){var v=parseInt(arr[i]);if(v>0){s+=v;pp+=par[i]}}return[s,pp]}
-function fmt(r){if(!r[0])return"–";var d=r[0]-r[1];return r[0]+" ("+(d>0?"+"+d:d===0?"E":d)+")"}
-function nav(){var h="";[["play","Play"],["card","Card"],["rounds","Rounds ("+R.length+")"],["stats","Stats"]].forEach(function(v){h+='<button data-a="view" data-v="'+v[0]+'" class="'+(S.view==v[0]?"on":"")+'">'+v[1]+"</button>"});document.getElementById("nav").innerHTML=h}
-function setup(){var h='<div class="row">';["Black","White","Red"].forEach(function(k){h+='<button class="chip '+(S.tee==k?"on":"")+'" data-a="tee" data-v="'+k+'">'+k+(k=="Red"?" (L)":"")+"<br><small>"+sum(D[k],0,18)+" m</small></button>"});h+="</div>";
-h+='<div class="row"><span class="m">Players</span>';for(var i=1;i<=4;i++)h+='<button class="chip '+(S.n==i?"on":"")+'" data-a="n" data-v="'+i+'">'+i+"</button>";return h+"</div>"}
-function play(){var i=S.hole,h=setup();
-h+='<div class="hole"><button data-a="prev">‹</button><div class="c"><b>Hole '+(i+1)+'</b><span>Par '+par[i]+" · "+D[S.tee][i]+" m · SI "+SI[S.tee][i]+'</span></div><button data-a="next">›</button></div>';
-for(var p=0;p<S.n;p++){var v=S.sc[p][i];
-h+='<div class="pl"><input class="nm" data-n="'+p+'" placeholder="Player '+(p+1)+'" value="'+esc(S.names[p])+'"><span class="tt">'+fmt(T(S.sc[p],0,18))+'</span><button data-a="dec" data-p="'+p+'">−</button><span class="sc">'+(v||"·")+'</span><button data-a="inc" data-p="'+p+'">+</button></div>'}
-h+='<button class="act" data-a="finish">Finish &amp; save round</button><button class="act g" data-a="clear">Clear scores</button>';return h}
-function card(){var h=setup()+'<div class="w"><table><tr><th>Hole</th><th>Par</th><th>SI</th><th>'+S.tee+"</th>";
-for(var p=0;p<S.n;p++)h+="<th>"+esc(nm(p))+"</th>";h+="</tr>";
-function sub(l,f,t){var r='<tr class="t"><td>'+l+"</td><td>"+sum(par,f,t)+"</td><td></td><td>"+sum(D[S.tee],f,t)+"</td>";for(var p=0;p<S.n;p++)r+="<td>"+fmt(T(S.sc[p],f,t))+"</td>";return r+"</tr>"}
-for(var i=0;i<18;i++){h+="<tr><td>"+(i+1)+"</td><td>"+par[i]+'</td><td class="m">'+SI[S.tee][i]+"</td><td>"+D[S.tee][i]+"</td>";
-for(var p=0;p<S.n;p++)h+='<td><input type="number" inputmode="numeric" min="1" max="20" data-p="'+p+'" data-h="'+i+'" value="'+(S.sc[p][i]||"")+'"></td>';h+="</tr>";
-if(i==8)h+=sub("Out",0,9);if(i==17){h+=sub("In",9,18)+sub("Total",0,18)}}
-return h+'</table></div><button class="act" data-a="finish">Finish &amp; save round</button>'}
-function rounds(){if(!R.length)return'<p class="m">No saved rounds yet. Finish a round to save it here.</p>';var h="";
-for(var k=R.length-1;k>=0;k--){var r=R[k];h+='<div class="rd"><div class="h"><span>'+esc(r.d)+" · "+r.tee+'</span><button data-a="del" data-v="'+k+'">Delete</button></div>';
-for(var p=0;p<r.names.length;p++)h+='<div style="display:flex;justify-content:space-between"><b>'+esc(r.names[p])+"</b><span>Out "+T(r.sc[p],0,9)[0]+" · In "+T(r.sc[p],9,18)[0]+" · <b>"+fmt(T(r.sc[p],0,18))+"</b></span></div>";h+="</div>"}return h}
-function allNames(){var n=[];R.forEach(function(r){r.names.forEach(function(x){if(n.indexOf(x)<0)n.push(x)})});return n}
-function sg(d){return(d>=0?"+":"")+d.toFixed(2)}
-function stats(){
-if(!R.length)return'<p class="m">Save a round to see stats.</p>';
-var names=allNames();if(names.indexOf(S.sp)<0)S.sp=names[0];
-var h='<div class="row" style="flex-wrap:wrap">';
-names.forEach(function(n,i){h+='<button class="chip '+(n==S.sp?"on":"")+'" data-a="sp" data-v="'+i+'">'+esc(n)+"</button>"});h+="</div>";
-var rs=[],g=[],dist=[0,0,0,0,0],pt={3:[0,0],4:[0,0],5:[0,0]},hd=[],bf=0,bb=0,i;
-for(i=0;i<18;i++)hd.push([0,0]);
-R.forEach(function(r){var k=r.names.indexOf(S.sp);if(k>=0)rs.push(r.sc[k])});
-rs.forEach(function(sc){
-var t=T(sc,0,18),f=T(sc,0,9),b=T(sc,9,18);
-if(t[1]==72)g.push(t[0]);
-if(f[1]==35&&(!bf||f[0]<bf))bf=f[0];
-if(b[1]==37&&(!bb||b[0]<bb))bb=b[0];
-for(var j=0;j<18;j++){var v=parseInt(sc[j]);if(!(v>0))continue;var d=v-par[j];
-dist[d<=-2?0:d==-1?1:d==0?2:d==1?3:4]++;pt[par[j]][0]+=d;pt[par[j]][1]++;hd[j][0]+=d;hd[j][1]++}});
-var mn=g.length?Math.min.apply(null,g):0,mx=g.length?Math.max.apply(null,g):0,av=g.length?g.reduce(function(a,b){return a+b},0)/g.length:0;
-function tile(l,v){return'<div class="k"><b>'+v+"</b><span>"+l+"</span></div>"}
-h+='<div class="g">'+tile("Rounds",rs.length)+tile("Best 18",mn||"–")+tile("Average 18",g.length?av.toFixed(1):"–")+tile("Worst 18",mx||"–")+tile("Best front 9",bf||"–")+tile("Best back 9",bb||"–")+"</div>";
-if(g.length)h+='<div class="m" style="font-size:13px">Average vs par: '+sg(av-72)+" (full 18-hole rounds only: "+g.length+")</div>";
-var tot=dist.reduce(function(a,b){return a+b},0);
-h+="<h2>Scoring</h2>";
-["Eagle or better","Birdie","Par","Bogey","Double or worse"].forEach(function(l,k){var pc=tot?dist[k]/tot*100:0;h+='<div class="bar"><span class="l">'+l+'</span><i style="width:'+pc*0.6+'%"></i><em>'+dist[k]+" · "+Math.round(pc)+"%</em></div>"});
-h+="<h2>Average vs par by hole type</h2>";
-[3,4,5].forEach(function(q){h+='<div class="hl"><span>Par '+q+'s</span><b>'+(pt[q][1]?sg(pt[q][0]/pt[q][1]):"–")+"</b></div>"});
-var hs=[];hd.forEach(function(x,k){if(x[1])hs.push({k:k,a:x[0]/x[1]})});hs.sort(function(a,b){return b.a-a.a});
-function hl(a){return a.map(function(o){return'<div class="hl"><span>Hole '+(o.k+1)+' (par '+par[o.k]+')</span><b>'+sg(o.a)+"</b></div>"}).join("")}
-if(hs.length>=6){h+="<h2>Hardest holes</h2>"+hl(hs.slice(0,3))+"<h2>Best holes</h2>"+hl(hs.slice(-3).reverse())}
-if(g.length>1){var last=g.slice(-10),lo=Math.min.apply(null,last)-5,hi=Math.max.apply(null,last)+3;
-h+="<h2>Last "+last.length+" rounds (gross)</h2><div class=\"tr\">"+last.map(function(v){return'<div style="height:'+((v-lo)/(hi-lo)*100)+'%">'+v+"</div>"}).join("")+"</div>"}
-return h}
-function render(){nav();var a=document.getElementById("app");a.innerHTML=S.view=="play"?play():S.view=="card"?card():S.view=="stats"?stats():rounds();
-if(S.view=="play"||S.view=="card")a.insertAdjacentHTML("beforeend",'<div class="n">Pars, distances and stroke index from Golfify; other sites list longer yardages, so check the club\'s printed card if it matters.</div>')}
-document.addEventListener("click",function(e){var x=e.target.closest("[data-a]");if(!x)return;var a=x.getAttribute("data-a"),v=x.getAttribute("data-v"),p=x.getAttribute("data-p"),i=S.hole;
-if(a=="view")S.view=v;else if(a=="tee")S.tee=v;else if(a=="n")S.n=+v;
-else if(a=="prev")S.hole=(i+17)%18;else if(a=="next")S.hole=(i+1)%18;
-else if(a=="inc"){var c=S.sc[p][i];S.sc[p][i]=c?Math.min(20,c+1):par[i]}
-else if(a=="dec"){var c2=S.sc[p][i];S.sc[p][i]=c2?Math.max(1,c2-1):par[i]}
-else if(a=="clear"){S.sc=[[],[],[],[]];S.hole=0}
-else if(a=="finish"){var any=false;for(var q=0;q<S.n;q++)if(T(S.sc[q],0,18)[0])any=true;if(!any)return;
-R.push({d:new Date().toLocaleDateString("en-AU",{day:"numeric",month:"short",year:"numeric"}),tee:S.tee,names:S.names.slice(0,S.n).map(function(_,k){return nm(k)}),sc:S.sc.slice(0,S.n).map(function(s){return s.slice()})});
-S.sc=[[],[],[],[]];S.hole=0;S.view="rounds"}
-else if(a=="sp")S.sp=allNames()[+v];
-else if(a=="del")R.splice(+v,1);
-save();render()});
-document.addEventListener("change",function(e){var x=e.target;
-if(x.hasAttribute("data-n")){S.names[x.getAttribute("data-n")]=x.value;save();return}
-if(x.hasAttribute("data-h")){S.sc[x.getAttribute("data-p")][x.getAttribute("data-h")]=parseInt(x.value)||undefined;save();render()}});
+const PAR = [4,4,3,4,5,4,4,4,3,4,5,4,4,3,4,5,3,5];
+const DISTANCES = {
+  Black: [398,330,141,368,458,311,424,317,193,320,460,333,369,169,344,427,129,450],
+  White: [393,330,132,360,448,301,416,308,184,310,448,323,360,162,325,424,121,445],
+  Red: [358,247,109,313,436,291,389,226,144,250,402,280,319,160,296,401,120,411]
+};
+const STROKE_INDEX_BASE = [1,10,11,7,18,15,4,16,3,8,12,9,2,6,5,14,17,13];
+const STROKE_INDEX = {
+  Black: STROKE_INDEX_BASE,
+  White: STROKE_INDEX_BASE,
+  Red: [18,8,12,3,14,6,10,1,16,5,11,2,15,7,13,4,17,9]
+};
+
+const DEFAULT_STATE = {
+  tee: 'White',
+  n: 2,
+  names: ['', '', '', ''],
+  sc: [[], [], [], []],
+  hole: 0,
+  view: 'play',
+  sp: ''
+};
+
+const STORAGE_KEYS = {
+  state: 'ng_state',
+  rounds: 'ng_rounds'
+};
+
+let state = { ...DEFAULT_STATE, names: [...DEFAULT_STATE.names], sc: DEFAULT_STATE.sc.map((row) => [...row]) };
+let rounds = [];
+
+function clampScore(value) {
+  const score = Number.parseInt(value, 10);
+  if (!Number.isFinite(score)) return undefined;
+  return Math.min(20, Math.max(1, score));
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function sum(values, start, end) {
+  let total = 0;
+  for (let i = start; i < end; i++) {
+    total += Number(values[i]) || 0;
+  }
+  return total;
+}
+
+function getPlayerName(index) {
+  return state.names[index] || `Player ${index + 1}`;
+}
+
+function getTotalForRange(scores, start, end) {
+  let scoreTotal = 0;
+  let parTotal = 0;
+
+  for (let i = start; i < end; i++) {
+    const value = Number.parseInt(scores[i], 10);
+    if (value > 0) {
+      scoreTotal += value;
+      parTotal += PAR[i];
+    }
+  }
+
+  return [scoreTotal, parTotal];
+}
+
+function formatScoreLine(scores) {
+  const total = getTotalForRange(scores, 0, 18);
+  if (!total[0]) return '–';
+  const diff = total[0] - total[1];
+  return `${total[0]} (${diff > 0 ? '+' + diff : diff === 0 ? 'E' : diff})`;
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEYS.state, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEYS.rounds, JSON.stringify(rounds));
+  } catch (error) {
+    // Ignore storage failures silently to keep the app usable in private mode or blocked storage.
+  }
+}
+
+function loadSavedData() {
+  try {
+    const savedState = JSON.parse(localStorage.getItem(STORAGE_KEYS.state) || 'null');
+    const savedRounds = JSON.parse(localStorage.getItem(STORAGE_KEYS.rounds) || 'null');
+
+    if (savedState && typeof savedState === 'object') {
+      state = {
+        ...DEFAULT_STATE,
+        ...savedState,
+        names: Array.isArray(savedState.names) ? savedState.names.slice(0, 4).concat(Array(4).fill('')).slice(0, 4) : [...DEFAULT_STATE.names],
+        sc: Array.from({ length: 4 }, (_, index) => Array.isArray(savedState.sc && savedState.sc[index]) ? savedState.sc[index].slice() : [])
+      };
+    }
+
+    if (Array.isArray(savedRounds)) {
+      rounds = savedRounds;
+    }
+  } catch (error) {
+    state = { ...DEFAULT_STATE, names: [...DEFAULT_STATE.names], sc: DEFAULT_STATE.sc.map((row) => [...row]) };
+    rounds = [];
+  }
+}
+
+function setup() {
+  let html = '<div class="row">';
+  ['Black', 'White', 'Red'].forEach((tee) => {
+    html += '<button class="chip ' + (state.tee === tee ? 'on' : '') + '" data-a="tee" data-v="' + tee + '" aria-label="Select ' + tee + ' tee">' + tee + (tee === 'Red' ? ' (L)' : '') + '<br><small>' + DISTANCES[tee][0] + ' m</small></button>';
+  });
+  html += '</div>';
+  html += '<div class="row"><span class="m">Players</span>';
+  for (let i = 1; i <= 4; i++) {
+    html += '<button class="chip ' + (state.n === i ? 'on' : '') + '" data-a="n" data-v="' + i + '" aria-label="Set number of players to ' + i + '">' + i + '</button>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function play() {
+  const holeIndex = state.hole;
+  let html = setup();
+
+  html += '<div class="hole">';
+  html += '<button data-a="prev" aria-label="Previous hole">‹</button>';
+  html += '<div class="c"><b>Hole ' + (holeIndex + 1) + '</b><span>Par ' + PAR[holeIndex] + ' · ' + DISTANCES[state.tee][holeIndex] + ' m · SI ' + STROKE_INDEX[state.tee][holeIndex] + '</span></div>';
+  html += '<button data-a="next" aria-label="Next hole">›</button>';
+  html += '</div>';
+
+  for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
+    const score = state.sc[playerIndex][holeIndex];
+    html += '<div class="pl">';
+    html += '<input class="nm" data-n="' + playerIndex + '" placeholder="Player ' + (playerIndex + 1) + '" value="' + escapeHtml(state.names[playerIndex]) + '" aria-label="Player ' + (playerIndex + 1) + ' name">';
+    html += '<span class="tt">' + formatScoreLine(state.sc[playerIndex]) + '</span>';
+    html += '<button data-a="dec" data-p="' + playerIndex + '" aria-label="Decrease score for ' + getPlayerName(playerIndex) + '">−</button>';
+    html += '<span class="sc">' + (score || 0) + '</span>';
+    html += '<button data-a="inc" data-p="' + playerIndex + '" aria-label="Increase score for ' + getPlayerName(playerIndex) + '">+</button>';
+    html += '</div>';
+  }
+
+  html += '<button class="act" data-a="finish">Finish &amp; save round</button>';
+  html += '<button class="act g" data-a="clear">Clear scores</button>';
+  return html;
+}
+
+function card() {
+  let html = setup() + '<div class="w"><table><tr><th>Hole</th><th>Par</th><th>SI</th><th>' + state.tee + '</th>';
+
+  for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
+    html += '<th>' + escapeHtml(getPlayerName(playerIndex)) + '</th>';
+  }
+  html += '</tr>';
+
+  function subtotalRow(label, start, end) {
+    let row = '<tr class="t"><td>' + label + '</td><td>' + sum(PAR, start, end) + '</td><td></td><td>' + sum(DISTANCES[state.tee], start, end) + '</td>';
+    for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
+      row += '<td>' + formatScoreLine(state.sc[playerIndex].slice(start, end)) + '</td>';
+    }
+    return row + '</tr>';
+  }
+
+  for (let holeIndex = 0; holeIndex < 18; holeIndex++) {
+    html += '<tr><td>' + (holeIndex + 1) + '</td><td>' + PAR[holeIndex] + '</td><td class="m">' + STROKE_INDEX[state.tee][holeIndex] + '</td><td>' + DISTANCES[state.tee][holeIndex] + '</td>';
+    for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
+      const value = state.sc[playerIndex][holeIndex] || '';
+      html += '<td><input type="number" inputmode="numeric" min="1" max="20" data-p="' + playerIndex + '" data-h="' + holeIndex + '" value="' + value + '" aria-label="Score for ' + escapeHtml(getPlayerName(playerIndex)) + ' on hole ' + (holeIndex + 1) + '"></td>';
+    }
+    html += '</tr>';
+
+    if (holeIndex === 8) {
+      html += subtotalRow('Out', 0, 9);
+    }
+    if (holeIndex === 17) {
+      html += subtotalRow('In', 9, 18) + subtotalRow('Total', 0, 18);
+    }
+  }
+
+  return html + '</table></div><button class="act" data-a="finish">Finish &amp; save round</button>';
+}
+
+function roundsView() {
+  if (!rounds.length) return '<p class="m">No saved rounds yet. Finish a round to save it here.</p>';
+
+  let html = '';
+  for (let index = rounds.length - 1; index >= 0; index--) {
+    const round = rounds[index];
+    html += '<div class="rd"><div class="h"><span>' + escapeHtml(round.d) + ' · ' + round.tee + '</span><button data-a="del" data-v="' + index + '" aria-label="Delete round from ' + escapeHtml(round.d) + '">Delete</button></div>';
+    for (let playerIndex = 0; playerIndex < round.names.length; playerIndex++) {
+      const playerScores = round.sc[playerIndex] || [];
+      html += '<div style="display:flex;justify-content:space-between"><b>' + escapeHtml(round.names[playerIndex]) + '</b><span>Out ' + getTotalForRange(playerScores, 0, 9)[0] + ' · In ' + getTotalForRange(playerScores, 9, 18)[0] + ' · <b>' + formatScoreLine(playerScores) + '</b></span></div>';
+    }
+    html += '</div>';
+  }
+  return html;
+}
+
+function allNames() {
+  const names = [];
+  rounds.forEach((round) => {
+    round.names.forEach((name) => {
+      if (names.indexOf(name) < 0) names.push(name);
+    });
+  });
+  return names;
+}
+
+function formatDelta(value) {
+  return (value >= 0 ? '+' : '') + value.toFixed(2);
+}
+
+function stats() {
+  if (!rounds.length) return '<p class="m">Save a round to see stats.</p>';
+
+  const names = allNames();
+  if (names.indexOf(state.sp) < 0) state.sp = names[0];
+
+  let html = '<div class="row" style="flex-wrap:wrap">';
+  names.forEach((name, index) => {
+    html += '<button class="chip ' + (name === state.sp ? 'on' : '') + '" data-a="sp" data-v="' + index + '" aria-label="Show stats for ' + escapeHtml(name) + '">' + escapeHtml(name) + '</button>';
+  });
+  html += '</div>';
+
+  const relevantScores = [];
+  const grossScores = [];
+  const distribution = [0, 0, 0, 0, 0];
+  const byType = { 3: [0, 0], 4: [0, 0], 5: [0, 0] };
+  const holeStats = [];
+  let bestFront = 0;
+  let bestBack = 0;
+  let foundFront = false;
+  let foundBack = false;
+
+  for (let i = 0; i < 18; i++) {
+    holeStats.push([0, 0]);
+  }
+
+  rounds.forEach((round) => {
+    const playerIndex = round.names.indexOf(state.sp);
+    if (playerIndex < 0) return;
+
+    const scores = round.sc[playerIndex] || [];
+    const total = getTotalForRange(scores, 0, 18);
+    const front = getTotalForRange(scores, 0, 9);
+    const back = getTotalForRange(scores, 9, 18);
+
+    relevantScores.push(scores);
+    if (total[1] === 72) grossScores.push(total[0]);
+
+    if (front[1] === 35 && (!foundFront || front[0] < bestFront)) {
+      bestFront = front[0];
+      foundFront = true;
+    }
+
+    if (back[1] === 37 && (!foundBack || back[0] < bestBack)) {
+      bestBack = back[0];
+      foundBack = true;
+    }
+
+    for (let holeIndex = 0; holeIndex < 18; holeIndex++) {
+      const value = Number.parseInt(scores[holeIndex], 10);
+      if (!(value > 0)) continue;
+      const delta = value - PAR[holeIndex];
+      const bucket = delta <= -2 ? 0 : delta === -1 ? 1 : delta === 0 ? 2 : delta === 1 ? 3 : 4;
+      distribution[bucket] += 1;
+      byType[PAR[holeIndex]][0] += delta;
+      byType[PAR[holeIndex]][1] += 1;
+      holeStats[holeIndex][0] += delta;
+      holeStats[holeIndex][1] += 1;
+    }
+  });
+
+  const minGross = grossScores.length ? Math.min(...grossScores) : 0;
+  const maxGross = grossScores.length ? Math.max(...grossScores) : 0;
+  const avgGross = grossScores.length ? grossScores.reduce((sum, value) => sum + value, 0) / grossScores.length : 0;
+
+  function statTile(label, value) {
+    return '<div class="k"><b>' + value + '</b><span>' + label + '</span></div>';
+  }
+
+  html += '<div class="g">' +
+    statTile('Rounds', relevantScores.length) +
+    statTile('Best 18', minGross || '–') +
+    statTile('Average 18', grossScores.length ? avgGross.toFixed(1) : '–') +
+    statTile('Worst 18', maxGross || '–') +
+    statTile('Best front 9', foundFront ? bestFront : '–') +
+    statTile('Best back 9', foundBack ? bestBack : '–') +
+    '</div>';
+
+  if (grossScores.length) {
+    html += '<div class="m" style="font-size:13px">Average vs par: ' + formatDelta(avgGross - 72) + ' (full 18-hole rounds only: ' + grossScores.length + ')</div>';
+  }
+
+  const totalScoredHoles = distribution.reduce((sum, value) => sum + value, 0);
+  html += '<h2>Scoring</h2>';
+  ['Eagle or better', 'Birdie', 'Par', 'Bogey', 'Double or worse'].forEach((label, index) => {
+    const pct = totalScoredHoles ? distribution[index] / totalScoredHoles * 100 : 0;
+    html += '<div class="bar"><span class="l">' + label + '</span><i style="width:' + (pct * 0.6) + '%"></i><em>' + distribution[index] + '</em></div>';
+  });
+
+  html += '<h2>Average vs par by hole type</h2>';
+  [3, 4, 5].forEach((parValue) => {
+    const values = byType[parValue];
+    html += '<div class="hl"><span>Par ' + parValue + 's</span><b>' + (values[1] ? formatDelta(values[0] / values[1]) : '–') + '</b></div>';
+  });
+
+  const rankedHoles = [];
+  holeStats.forEach((details, index) => {
+    if (details[1]) rankedHoles.push({ holeIndex: index, average: details[0] / details[1] });
+  });
+  rankedHoles.sort((a, b) => b.average - a.average);
+
+  function holeSummary(list) {
+    return list.map((entry) => '<div class="hl"><span>Hole ' + (entry.holeIndex + 1) + ' (par ' + PAR[entry.holeIndex] + ')</span><b>' + formatDelta(entry.average) + '</b></div>').join('');
+  }
+
+  if (rankedHoles.length >= 6) {
+    html += '<h2>Hardest holes</h2>' + holeSummary(rankedHoles.slice(0, 3));
+    html += '<h2>Best holes</h2>' + holeSummary(rankedHoles.slice(-3).reverse());
+  }
+
+  if (grossScores.length > 1) {
+    const lastRounds = grossScores.slice(-10);
+    const minValue = Math.min(...lastRounds) - 5;
+    const maxValue = Math.max(...lastRounds) + 3;
+    html += '<h2>Last ' + lastRounds.length + ' rounds (gross)</h2><div class="tr">' + lastRounds.map((value) => '<div style="height:' + (((value - minValue) / (maxValue - minValue || 1)) * 100) + '%">' + value + '</div>').join('') + '</div>';
+  }
+
+  return html;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const nav = document.getElementById('nav');
+
+  nav.innerHTML = [['play', 'Play'], ['card', 'Card'], ['rounds', 'Rounds (' + rounds.length + ')'], ['stats', 'Stats']].map(([viewKey, label]) => {
+    return '<button data-a="view" data-v="' + viewKey + '" class="' + (state.view === viewKey ? 'on' : '') + '" aria-label="Open ' + label + '">' + label + '</button>';
+  }).join('');
+
+  const viewMap = {
+    play: play(),
+    card: card(),
+    stats: stats(),
+    rounds: roundsView()
+  };
+
+  app.innerHTML = viewMap[state.view] || viewMap.play;
+
+  if (state.view === 'play' || state.view === 'card') {
+    app.insertAdjacentHTML('beforeend', '<div class="n">Pars, distances and stroke index from Golfify; other sites list longer yardages, so check the club\'s printed card if needed.</div>');
+  }
+}
+
+function handleClick(event) {
+  const target = event.target.closest('[data-a]');
+  if (!target) return;
+
+  const action = target.getAttribute('data-a');
+  const value = target.getAttribute('data-v');
+  const playerIndex = target.getAttribute('data-p');
+
+  if (action === 'view') {
+    state.view = value;
+  } else if (action === 'tee') {
+    state.tee = value;
+  } else if (action === 'n') {
+    state.n = Number(value);
+  } else if (action === 'prev') {
+    state.hole = (state.hole + 17) % 18;
+  } else if (action === 'next') {
+    state.hole = (state.hole + 1) % 18;
+  } else if (action === 'inc') {
+    const current = state.sc[playerIndex][state.hole];
+    state.sc[playerIndex][state.hole] = current ? Math.min(20, current + 1) : PAR[state.hole];
+  } else if (action === 'dec') {
+    const current = state.sc[playerIndex][state.hole];
+    state.sc[playerIndex][state.hole] = current ? Math.max(1, current - 1) : PAR[state.hole];
+  } else if (action === 'clear') {
+    state.sc = [[], [], [], []];
+    state.hole = 0;
+  } else if (action === 'finish') {
+    let hasAnyScores = false;
+    for (let index = 0; index < state.n; index++) {
+      if (getTotalForRange(state.sc[index], 0, 18)[0]) hasAnyScores = true;
+    }
+
+    if (!hasAnyScores) return;
+
+    const savedRound = {
+      d: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
+      tee: state.tee,
+      names: state.names.slice(0, state.n).map((_, index) => getPlayerName(index)),
+      sc: state.sc.slice(0, state.n).map((scores) => scores.slice())
+    };
+
+    rounds.push(savedRound);
+    state.sc = [[], [], [], []];
+    state.hole = 0;
+    state.view = 'rounds';
+  } else if (action === 'sp') {
+    state.sp = allNames()[Number(value)];
+  } else if (action === 'del') {
+    rounds.splice(Number(value), 1);
+  }
+
+  save();
+  render();
+}
+
+function handleChange(event) {
+  const target = event.target;
+
+  if (target.hasAttribute('data-n')) {
+    const playerIndex = Number(target.getAttribute('data-n'));
+    state.names[playerIndex] = target.value;
+    save();
+    return;
+  }
+
+  if (target.hasAttribute('data-h')) {
+    const playerIndex = Number(target.getAttribute('data-p'));
+    const holeIndex = Number(target.getAttribute('data-h'));
+    const score = clampScore(target.value);
+    if (score === undefined) {
+      state.sc[playerIndex][holeIndex] = undefined;
+    } else {
+      state.sc[playerIndex][holeIndex] = score;
+    }
+    save();
+    render();
+  }
+}
+
+loadSavedData();
+document.addEventListener('click', handleClick);
+document.addEventListener('change', handleChange);
 render();
 </script>
 </body>
