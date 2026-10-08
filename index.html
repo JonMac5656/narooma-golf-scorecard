@@ -1,31 +1,569 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Narooma Golf Scorecard</title>
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Narooma Golf Scorecard</title>
+<style>
+:root{--bg:#f7f8f5;--fg:#1c2b22;--mut:#6b7a70;--line:#d5dcd3;--hd:#1f5c3a;--hdfg:#fff;--sub:#e7eee6;--in:#fff;--bad:#b3402f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a15;--fg:#e6eee8;--mut:#93a39a;--line:#2b3a31;--hd:#2e7d52;--sub:#1c2922;--in:#18231c;--bad:#e0705f}}
+:root[data-theme="dark"]{--bg:#121a15;--fg:#e6eee8;--mut:#93a39a;--line:#2b3a31;--hd:#2e7d52;--sub:#1c2922;--in:#18231c;--bad:#e0705f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:var(--hd);color:#fff;padding:12px 16px 0}
+h1{font-size:18px;margin:0 0 8px}nav{display:flex;gap:4px}nav button{flex:1;background:transparent;color:#fffc;border:0;border-bottom:3px solid transparent;padding:8px;font:inherit;cursor:pointer}nav button.on{color:#fff;border-bottom-color:#fff;font-weight:600}main{max-width:640px;margin:0 auto;padding:14px 16px 40px}button{font:inherit;color:var(--fg)}button:focus-visible,input:focus-visible{outline:2px solid var(--hd);outline-offset:2px}.row{display:flex;gap:6px;margin-bottom:12px;align-items:center;flex-wrap:wrap}.chip{flex:1;padding:8px 4px;border:1px solid var(--line);background:var(--in);border-radius:8px;cursor:pointer;min-width:60px}.chip.on{background:var(--hd);color:#fff;border-color:var(--hd)}.hole{display:flex;align-items:center;justify-content:space-between;background:var(--sub);border-radius:12px;padding:10px;margin-bottom:12px}.hole .c{text-align:center}.hole b{font-size:26px;display:block;line-height:1.1}.hole span{color:var(--mut);font-size:13px}.hole button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--in);font-size:20px;cursor:pointer}.pl{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:10px 0}.pl input.nm{flex:1;min-width:0;background:transparent;border:0;color:var(--fg);font:inherit;font-weight:600}.pl .tt{font-size:12px;color:var(--mut);width:70px;text-align:right}.pl .sc{width:40px;text-align:center;font-size:24px;font-weight:700}.pl button{width:46px;height:46px;border-radius:10px;border:1px solid var(--line);background:var(--in);font-size:22px;cursor:pointer}.act{display:block;width:100%;margin-top:14px;padding:12px;border-radius:10px;border:0;background:var(--hd);color:#fff;cursor:pointer;font-weight:600}.act.g{background:var(--in);color:var(--fg);border:1px solid var(--line)}.act.danger{background:#d9534f;color:#fff}.w{overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:420px}th,td{border-bottom:1px solid var(--line);padding:5px 3px;text-align:center}th{background:var(--hd);color:#fff;font-size:13px}tr.t td{background:var(--sub);font-weight:600}td input{width:42px;padding:5px 2px;text-align:center;border:1px solid var(--line);border-radius:6px;background:var(--in);color:var(--fg);font:inherit}.m{color:var(--mut)}.rd{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--in)}.rd .h{display:flex;justify-content:space-between;color:var(--mut);font-size:13px;margin-bottom:4px}.rd .h button{background:none;border:0;color:var(--bad);cursor:pointer}.n{font-size:12px;color:var(--mut);margin-top:14px}.g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}.k{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--in)}.k b{font-size:22px;display:block}.k span{font-size:12px;color:var(--mut)}.bar{display:flex;align-items:center;gap:8px;margin:5px 0}.bar span.l{width:105px;font-size:13px}.bar i{display:block;height:14px;background:var(--hd);border-radius:4px;min-width:2px}.bar em{font-style:normal;font-size:12px;color:var(--mut)}.tr{display:flex;align-items:flex-end;gap:4px;height:100px}.tr div{flex:1;background:var(--hd);border-radius:4px 4px 0 0;color:#fff;font-size:11px;text-align:center;padding-top:2px}h2{font-size:15px;margin:18px 0 6px}.hl{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 0}.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:1000;align-items:center;justify-content:center}.modal.show{display:flex}.modal-content{background:var(--bg);border-radius:12px;padding:24px;max-width:420px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,.2)}.modal-content h3{margin:0 0 12px;font-size:18px}.modal-content p{margin:0 0 18px;color:var(--mut);line-height:1.5;white-space:pre-line}.modal-input{width:100%;padding:10px;margin-bottom:12px;border:1px solid var(--line);border-radius:8px;background:var(--in);color:var(--fg);font:inherit;box-sizing:border-box}.modal-actions{display:flex;gap:8px;justify-content:flex-end}.modal-actions button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600}.modal-actions .cancel{background:var(--line);color:var(--fg)}.modal-actions .confirm{background:var(--bad);color:white}.players-section{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--sub);margin-bottom:12px;margin-top:12px}.players-section h3{margin:0 0 10px;font-size:14px;font-weight:600}.players-list{display:flex;flex-direction:column;gap:8px}.player-item{display:flex;align-items:center;gap:8px}.player-item input{flex:1;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--in);color:var(--fg);font:inherit}.player-item button{width:32px;height:32px;border-radius:6px;border:1px solid var(--line);background:var(--in);font-size:16px;cursor:pointer}
+</style>
 </head>
 <body>
-  <header>
-    <h1>⛳ Narooma Golf Club · Par 72</h1>
-    <nav id="nav" aria-label="Main navigation"></nav>
-  </header>
-
-  <main id="app"></main>
-
-  <div id="modal" class="modal" aria-live="polite" role="dialog" aria-modal="true">
-    <div class="modal-content">
-      <h3 id="modal-title">Confirm</h3>
-      <p id="modal-message"></p>
-      <input type="text" id="modal-input" class="modal-input" style="display:none" placeholder="Enter name">
-      <div class="modal-actions">
-        <button class="cancel" id="modal-cancel" type="button">Cancel</button>
-        <button class="confirm" id="modal-confirm" type="button">Confirm</button>
-      </div>
+<header>
+  <h1>⛳ Narooma Golf Club · Par 72</h1>
+  <nav id="nav" aria-label="Main navigation"></nav>
+</header>
+<main id="app"></main>
+<div id="modal" class="modal" aria-live="polite">
+  <div class="modal-content">
+    <h3 id="modal-title">Confirm</h3>
+    <p id="modal-message"></p>
+    <input type="text" id="modal-input" class="modal-input" style="display:none" placeholder="Enter name">
+    <div class="modal-actions">
+      <button class="cancel" id="modal-cancel">Cancel</button>
+      <button class="confirm" id="modal-confirm">Confirm</button>
     </div>
   </div>
+</div>
+<script>
+const PAR = [4,4,3,4,5,4,4,4,3,4,5,4,4,3,4,5,3,5];
+const DISTANCES = {
+  Black: [398,330,141,368,458,311,424,317,193,320,460,333,369,169,344,427,129,450],
+  White: [393,330,132,360,448,301,416,308,184,310,448,323,360,162,325,424,121,445],
+  Red: [358,247,109,313,436,291,389,226,144,250,402,280,319,160,296,401,120,411]
+};
+const STROKE_INDEX_BASE = [1,10,11,7,18,15,4,16,3,8,12,9,2,6,5,14,17,13];
+const STROKE_INDEX = {
+  Black: STROKE_INDEX_BASE,
+  White: STROKE_INDEX_BASE,
+  Red: [18,8,12,3,14,6,10,1,16,5,11,2,15,7,13,4,17,9]
+};
 
-  <script src="app.js"></script>
+const DEFAULT_STATE = {
+  tee: 'White',
+  n: 2,
+  names: ['', '', '', ''],
+  sc: [[], [], [], []],
+  hole: 0,
+  view: 'play',
+  sp: ''
+};
+
+const STORAGE_KEYS = {
+  state: 'ng_state',
+  rounds: 'ng_rounds'
+};
+
+let state = { ...DEFAULT_STATE, names: [...DEFAULT_STATE.names], sc: DEFAULT_STATE.sc.map((row) => [...row]) };
+let rounds = [];
+let modalCallback = null;
+let modalInputMode = false;
+
+function clampScore(value) {
+  const score = Number.parseInt(value, 10);
+  if (!Number.isFinite(score)) return undefined;
+  return Math.min(20, Math.max(1, score));
+}
+
+function escapeHtml(value) {
+  return String(value ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+}
+
+function sum(values, start, end) {
+  let total = 0;
+  for (let i = start; i < end; i++) total += Number(values[i]) || 0;
+  return total;
+}
+
+function getPlayerName(index) {
+  return state.names[index] || `Player ${index + 1}`;
+}
+
+function getTotalForRange(scores, start, end) {
+  let scoreTotal = 0;
+  let parTotal = 0;
+  for (let i = start; i < end; i++) {
+    const value = Number.parseInt(scores[i], 10);
+    if (value > 0) {
+      scoreTotal += value;
+      parTotal += PAR[i];
+    }
+  }
+  return [scoreTotal, parTotal];
+}
+
+function formatScoreLine(scores) {
+  const total = getTotalForRange(scores, 0, 18);
+  if (!total[0]) return '–';
+  const diff = total[0] - total[1];
+  return `${total[0]} (${diff > 0 ? '+' + diff : diff === 0 ? 'E' : diff})`;
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEYS.state, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEYS.rounds, JSON.stringify(rounds));
+  } catch (error) {}
+}
+
+function loadSavedData() {
+  try {
+    const savedState = JSON.parse(localStorage.getItem(STORAGE_KEYS.state) || 'null');
+    const savedRounds = JSON.parse(localStorage.getItem(STORAGE_KEYS.rounds) || 'null');
+
+    if (savedState && typeof savedState === 'object') {
+      state = {
+        ...DEFAULT_STATE,
+        ...savedState,
+        names: Array.isArray(savedState.names) ? savedState.names.slice(0, 4).concat(Array(4).fill('')).slice(0, 4) : [...DEFAULT_STATE.names],
+        sc: Array.from({ length: 4 }, (_, index) => Array.isArray(savedState.sc && savedState.sc[index]) ? savedState.sc[index].slice() : [])
+      };
+    }
+
+    if (Array.isArray(savedRounds)) rounds = savedRounds;
+  } catch (error) {
+    state = { ...DEFAULT_STATE, names: [...DEFAULT_STATE.names], sc: DEFAULT_STATE.sc.map((row) => [...row]) };
+    rounds = [];
+  }
+}
+
+function showModal(title, message, callback, inputMode = false) {
+  const modal = document.getElementById('modal');
+  const input = document.getElementById('modal-input');
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-message').textContent = message;
+  modalCallback = callback || null;
+  modalInputMode = inputMode;
+  
+  if (inputMode) {
+    input.style.display = 'block';
+    input.value = '';
+    input.focus();
+  } else {
+    input.style.display = 'none';
+  }
+  
+  modal.classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('modal-input').value = '';
+  modalCallback = null;
+  modalInputMode = false;
+}
+
+function clearAllStats() {
+  showModal(
+    'Clear all saved stats?',
+    'This will permanently remove all saved rounds and scores from this app.',
+    () => {
+      rounds = [];
+      state.sp = '';
+      save();
+      render();
+      closeModal();
+    }
+  );
+}
+
+function editPlayerName(index) {
+  showModal(
+    `Edit Player ${index + 1} Name`,
+    'Enter the player name:',
+    () => {
+      const input = document.getElementById('modal-input');
+      state.names[index] = input.value.trim();
+      save();
+      render();
+      closeModal();
+    },
+    true
+  );
+  const input = document.getElementById('modal-input');
+  input.value = state.names[index] || '';
+}
+
+function setupTee() {
+  let html = '<div class="row"><span class="m">Tee</span>';
+  ['Black', 'White', 'Red'].forEach((tee) => {
+    html += '<button class="chip ' + (state.tee === tee ? 'on' : '') + '" data-a="tee" data-v="' + tee + '" aria-label="Select ' + tee + ' tee">' + tee + (tee === 'Red' ? ' (L)' : '') + '</button>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function setupPlayers() {
+  let html = '<div class="row"><span class="m">Players</span>';
+  for (let i = 1; i <= 4; i++) {
+    html += '<button class="chip ' + (state.n === i ? 'on' : '') + '" data-a="n" data-v="' + i + '" aria-label="Set number of players to ' + i + '">' + i + '</button>';
+  }
+  html += '</div>';
+  
+  html += '<div class="players-section">';
+  html += '<h3>Player names</h3>';
+  html += '<div class="players-list">';
+  for (let i = 0; i < state.n; i++) {
+    html += '<div class="player-item">';
+    html += '<input type="text" data-player="' + i + '" value="' + escapeHtml(state.names[i]) + '" placeholder="Player ' + (i + 1) + '" aria-label="Player ' + (i + 1) + ' name">';
+    html += '<button data-a="edit-player" data-v="' + i + '" aria-label="Edit player ' + (i + 1) + ' name" title="Edit">✎</button>';
+    html += '</div>';
+  }
+  html += '</div>';
+  html += '</div>';
+  
+  return html;
+}
+
+function play() {
+  const holeIndex = state.hole;
+  let html = setupTee();
+
+  html += '<div class="hole">';
+  html += '<button data-a="prev" aria-label="Previous hole">‹</button>';
+  html += '<div class="c"><b>Hole ' + (holeIndex + 1) + '</b><span>Par ' + PAR[holeIndex] + ' · ' + DISTANCES[state.tee][holeIndex] + ' m · SI ' + STROKE_INDEX[state.tee][holeIndex] + '</span></div>';
+  html += '<button data-a="next" aria-label="Next hole">›</button>';
+  html += '</div>';
+
+  for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
+    const score = state.sc[playerIndex][holeIndex];
+    html += '<div class="pl">';
+    html += '<b style="width:40px;text-align:left">' + escapeHtml(getPlayerName(playerIndex)) + '</b>';
+    html += '<span class="tt">' + formatScoreLine(state.sc[playerIndex]) + '</span>';
+    html += '<button data-a="dec" data-p="' + playerIndex + '" aria-label="Decrease score for ' + getPlayerName(playerIndex) + '">−</button>';
+    html += '<span class="sc">' + (score || 0) + '</span>';
+    html += '<button data-a="inc" data-p="' + playerIndex + '" aria-label="Increase score for ' + getPlayerName(playerIndex) + '">+</button>';
+    html += '</div>';
+  }
+
+  html += '<button class="act" data-a="finish">Finish &amp; save round</button>';
+  html += '<button class="act g" data-a="clear">Clear scores</button>';
+  
+  html += setupPlayers();
+  
+  return html;
+}
+
+function card() {
+  let html = setupTee() + '<div class="w"><table><tr><th>Hole</th><th>Par</th><th>SI</th><th>' + state.tee + '</th>';
+
+  for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
+    html += '<th>' + escapeHtml(getPlayerName(playerIndex)) + '</th>';
+  }
+  html += '</tr>';
+
+  function subtotalRow(label, start, end) {
+    let row = '<tr class="t"><td>' + label + '</td><td>' + sum(PAR, start, end) + '</td><td></td><td>' + sum(DISTANCES[state.tee], start, end) + '</td>';
+    for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
+      row += '<td>' + formatScoreLine(state.sc[playerIndex].slice(start, end)) + '</td>';
+    }
+    return row + '</tr>';
+  }
+
+  for (let holeIndex = 0; holeIndex < 18; holeIndex++) {
+    html += '<tr><td>' + (holeIndex + 1) + '</td><td>' + PAR[holeIndex] + '</td><td class="m">' + STROKE_INDEX[state.tee][holeIndex] + '</td><td>' + DISTANCES[state.tee][holeIndex] + '</td>';
+    for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
+      const value = state.sc[playerIndex][holeIndex] || '';
+      html += '<td><input type="number" inputmode="numeric" min="1" max="20" data-p="' + playerIndex + '" data-h="' + holeIndex + '" value="' + value + '" aria-label="Score for ' + escapeHtml(getPlayerName(playerIndex)) + ' on hole ' + (holeIndex + 1) + '"></td>';
+    }
+    html += '</tr>';
+
+    if (holeIndex === 8) html += subtotalRow('Out', 0, 9);
+    if (holeIndex === 17) html += subtotalRow('In', 9, 18) + subtotalRow('Total', 0, 18);
+  }
+
+  html += '</table></div><button class="act" data-a="finish">Finish &amp; save round</button>';
+  
+  html += setupPlayers();
+  
+  return html;
+}
+
+function roundsView() {
+  if (!rounds.length) {
+    return '<p class="m">No saved rounds yet. Finish a round to save it here.</p>';
+  }
+
+  let html = '';
+  for (let index = rounds.length - 1; index >= 0; index--) {
+    const round = rounds[index];
+    html += '<div class="rd"><div class="h"><span>' + escapeHtml(round.d) + ' · ' + round.tee + '</span><button data-a="del" data-v="' + index + '" aria-label="Delete round from ' + escapeHtml(round.d) + '">×</button></div>';
+    for (let playerIndex = 0; playerIndex < round.names.length; playerIndex++) {
+      const playerScores = round.sc[playerIndex] || [];
+      const out = getTotalForRange(playerScores, 0, 9)[0];
+      const inTotal = getTotalForRange(playerScores, 9, 18)[0];
+      const total = getTotalForRange(playerScores, 0, 18)[0];
+      html += '<div style="display:flex;justify-content:space-between"><b>' + escapeHtml(round.names[playerIndex]) + '</b><span>Out ' + out + ' · In ' + inTotal + ' · Total ' + total + '</span></div>';
+    }
+    html += '</div>';
+  }
+  html += '<div style="margin-top:20px;border-top:1px solid var(--line);padding-top:14px">';
+  html += '<button class="act danger" data-a="clear-all">Clear all stats</button>';
+  html += '</div>';
+  return html;
+}
+
+function allNames() {
+  const names = [];
+  rounds.forEach((round) => {
+    round.names.forEach((name) => {
+      if (names.indexOf(name) < 0) names.push(name);
+    });
+  });
+  return names;
+}
+
+function formatDelta(value) {
+  return (value >= 0 ? '+' : '') + value.toFixed(2);
+}
+
+function stats() {
+  if (!rounds.length) return '<p class="m">Save a round to see stats.</p>';
+
+  const names = allNames();
+  if (names.indexOf(state.sp) < 0) state.sp = names[0];
+
+  let html = '<div class="row" style="flex-wrap:wrap">';
+  names.forEach((name, index) => {
+    html += '<button class="chip ' + (name === state.sp ? 'on' : '') + '" data-a="sp" data-v="' + index + '" aria-label="Show stats for ' + escapeHtml(name) + '">' + escapeHtml(name) + '</button>';
+  });
+  html += '</div>';
+
+  const relevantScores = [];
+  const grossScores = [];
+  const distribution = [0, 0, 0, 0, 0];
+  const byType = { 3: [0, 0], 4: [0, 0], 5: [0, 0] };
+  const holeStats = [];
+  let bestFront = 0;
+  let bestBack = 0;
+  let foundFront = false;
+  let foundBack = false;
+
+  for (let i = 0; i < 18; i++) holeStats.push([0, 0]);
+
+  rounds.forEach((round) => {
+    const playerIndex = round.names.indexOf(state.sp);
+    if (playerIndex < 0) return;
+
+    const scores = round.sc[playerIndex] || [];
+    const total = getTotalForRange(scores, 0, 18);
+    const front = getTotalForRange(scores, 0, 9);
+    const back = getTotalForRange(scores, 9, 18);
+
+    relevantScores.push(scores);
+    if (total[1] === 72) grossScores.push(total[0]);
+
+    if (front[1] === 35 && (!foundFront || front[0] < bestFront)) {
+      bestFront = front[0];
+      foundFront = true;
+    }
+
+    if (back[1] === 37 && (!foundBack || back[0] < bestBack)) {
+      bestBack = back[0];
+      foundBack = true;
+    }
+
+    for (let holeIndex = 0; holeIndex < 18; holeIndex++) {
+      const value = Number.parseInt(scores[holeIndex], 10);
+      if (!(value > 0)) continue;
+      const delta = value - PAR[holeIndex];
+      const bucket = delta <= -2 ? 0 : delta === -1 ? 1 : delta === 0 ? 2 : delta === 1 ? 3 : 4;
+      distribution[bucket] += 1;
+      byType[PAR[holeIndex]][0] += delta;
+      byType[PAR[holeIndex]][1] += 1;
+      holeStats[holeIndex][0] += delta;
+      holeStats[holeIndex][1] += 1;
+    }
+  });
+
+  const minGross = grossScores.length ? Math.min(...grossScores) : 0;
+  const maxGross = grossScores.length ? Math.max(...grossScores) : 0;
+  const avgGross = grossScores.length ? grossScores.reduce((sum, value) => sum + value, 0) / grossScores.length : 0;
+
+  function statTile(label, value) {
+    return '<div class="k"><b>' + value + '</b><span>' + label + '</span></div>';
+  }
+
+  html += '<div class="g">' +
+    statTile('Rounds', relevantScores.length) +
+    statTile('Best 18', minGross || '–') +
+    statTile('Average 18', grossScores.length ? avgGross.toFixed(1) : '–') +
+    statTile('Worst 18', maxGross || '–') +
+    statTile('Best front 9', foundFront ? bestFront : '–') +
+    statTile('Best back 9', foundBack ? bestBack : '–') +
+    '</div>';
+
+  if (grossScores.length) {
+    html += '<div class="m" style="font-size:13px">Average vs par: ' + formatDelta(avgGross - 72) + ' (full 18-hole rounds only: ' + grossScores.length + ')</div>';
+  }
+
+  const totalScoredHoles = distribution.reduce((sum, value) => sum + value, 0);
+  html += '<h2>Scoring</h2>';
+  ['Eagle or better', 'Birdie', 'Par', 'Bogey', 'Double or worse'].forEach((label, index) => {
+    const pct = totalScoredHoles ? distribution[index] / totalScoredHoles * 100 : 0;
+    html += '<div class="bar"><span class="l">' + label + '</span><i style="width:' + (pct * 0.6) + '%"></i><em>' + distribution[index] + '</em></div>';
+  });
+
+  html += '<h2>Average vs par by hole type</h2>';
+  [3, 4, 5].forEach((parValue) => {
+    const values = byType[parValue];
+    html += '<div class="hl"><span>Par ' + parValue + 's</span><b>' + (values[1] ? formatDelta(values[0] / values[1]) : '–') + '</b></div>';
+  });
+
+  const rankedHoles = [];
+  holeStats.forEach((details, index) => {
+    if (details[1]) rankedHoles.push({ holeIndex: index, average: details[0] / details[1] });
+  });
+  rankedHoles.sort((a, b) => b.average - a.average);
+
+  function holeSummary(list) {
+    return list.map((entry) => '<div class="hl"><span>Hole ' + (entry.holeIndex + 1) + ' (par ' + PAR[entry.holeIndex] + ')</span><b>' + formatDelta(entry.average) + '</b></div>').join('');
+  }
+
+  if (rankedHoles.length >= 6) {
+    html += '<h2>Hardest holes</h2>' + holeSummary(rankedHoles.slice(0, 3));
+    html += '<h2>Best holes</h2>' + holeSummary(rankedHoles.slice(-3).reverse());
+  }
+
+  if (grossScores.length > 1) {
+    const lastRounds = grossScores.slice(-10);
+    const minValue = Math.min(...lastRounds) - 5;
+    const maxValue = Math.max(...lastRounds) + 3;
+    html += '<h2>Last ' + lastRounds.length + ' rounds (gross)</h2><div class="tr">' + lastRounds.map((value) => '<div style="height:' + (((value - minValue) / (maxValue - minValue || 1)) * 100) + '%">' + value + '</div>').join('') + '</div>';
+  }
+
+  html += '<div style="margin-top:20px"><button class="act danger" data-a="clear-all">Clear stats</button></div>';
+  return html;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  const nav = document.getElementById('nav');
+
+  nav.innerHTML = [['play', 'Play'], ['card', 'Card'], ['rounds', 'Rounds (' + rounds.length + ')'], ['stats', 'Stats']].map(([viewKey, label]) => {
+    return '<button data-a="view" data-v="' + viewKey + '" class="' + (state.view === viewKey ? 'on' : '') + '" aria-label="Open ' + label + '">' + label + '</button>';
+  }).join('');
+
+  const viewMap = {
+    play: play(),
+    card: card(),
+    stats: stats(),
+    rounds: roundsView()
+  };
+
+  app.innerHTML = viewMap[state.view] || viewMap.play;
+
+  if (state.view === 'play' || state.view === 'card') {
+    app.insertAdjacentHTML('beforeend', '<div class="n">Pars, distances and stroke index from Golfify; other sites list longer yardages, so check the club\'s printed card if needed.</div>');
+  }
+}
+
+function handleClick(event) {
+  const target = event.target.closest('[data-a]');
+  if (!target) return;
+
+  const action = target.getAttribute('data-a');
+  const value = target.getAttribute('data-v');
+  const playerIndex = target.getAttribute('data-p');
+
+  if (action === 'view') {
+    state.view = value;
+  } else if (action === 'tee') {
+    state.tee = value;
+  } else if (action === 'n') {
+    state.n = Number(value);
+  } else if (action === 'prev') {
+    state.hole = (state.hole + 17) % 18;
+  } else if (action === 'next') {
+    state.hole = (state.hole + 1) % 18;
+  } else if (action === 'inc') {
+    const current = state.sc[playerIndex][state.hole];
+    state.sc[playerIndex][state.hole] = current ? Math.min(20, current + 1) : PAR[state.hole];
+  } else if (action === 'dec') {
+    const current = state.sc[playerIndex][state.hole];
+    state.sc[playerIndex][state.hole] = current ? Math.max(1, current - 1) : PAR[state.hole];
+  } else if (action === 'clear') {
+    state.sc = [[], [], [], []];
+    state.hole = 0;
+  } else if (action === 'finish') {
+    let hasAnyScores = false;
+    for (let index = 0; index < state.n; index++) {
+      if (getTotalForRange(state.sc[index], 0, 18)[0]) hasAnyScores = true;
+    }
+    if (!hasAnyScores) return;
+
+    const savedRound = {
+      d: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }),
+      tee: state.tee,
+      names: state.names.slice(0, state.n).map((_, index) => getPlayerName(index)),
+      sc: state.sc.slice(0, state.n).map((scores) => scores.slice())
+    };
+
+    rounds.push(savedRound);
+    state.sc = [[], [], [], []];
+    state.hole = 0;
+    state.view = 'rounds';
+  } else if (action === 'sp') {
+    state.sp = allNames()[Number(value)];
+  } else if (action === 'del') {
+    rounds.splice(Number(value), 1);
+  } else if (action === 'clear-all') {
+    clearAllStats();
+    return;
+  } else if (action === 'edit-player') {
+    editPlayerName(Number(value));
+    return;
+  }
+
+  save();
+  render();
+}
+
+function handleChange(event) {
+  const target = event.target;
+
+  if (target.hasAttribute('data-player')) {
+    const playerIndex = Number(target.getAttribute('data-player'));
+    state.names[playerIndex] = target.value;
+    save();
+    return;
+  }
+
+  if (target.hasAttribute('data-h')) {
+    const playerIndex = Number(target.getAttribute('data-p'));
+    const holeIndex = Number(target.getAttribute('data-h'));
+    const score = clampScore(target.value);
+    state.sc[playerIndex][holeIndex] = score === undefined ? undefined : score;
+    save();
+    render();
+  }
+}
+
+document.getElementById('modal-confirm').addEventListener('click', () => {
+  if (modalCallback) modalCallback();
+  closeModal();
+});
+
+document.getElementById('modal-cancel').addEventListener('click', closeModal);
+
+document.getElementById('modal-input').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && modalInputMode) {
+    if (modalCallback) modalCallback();
+    closeModal();
+  }
+});
+
+loadSavedData();
+document.addEventListener('click', handleClick);
+document.addEventListener('change', handleChange);
+render();
+</script>
 </body>
 </html>
