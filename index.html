@@ -63,7 +63,7 @@ h2{font-size:15px;margin:18px 0 6px}
 .modal-actions button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
 .modal-actions .cancel{background:var(--line);color:var(--fg)}
 .modal-actions .confirm{background:var(--bad);color:white}
-.players-section{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--sub);margin-bottom:12px}
+.players-section{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--sub);margin-bottom:12px;margin-top:12px}
 .players-section h3{margin:0 0 10px;font-size:14px;font-weight:600}
 .players-list{display:flex;flex-direction:column;gap:8px}
 .player-item{display:flex;align-items:center;gap:8px}
@@ -286,14 +286,17 @@ function editPlayerName(index) {
   input.value = state.names[index] || '';
 }
 
-function setup() {
+function setupTee() {
   let html = '<div class="row"><span class="m">Tee</span>';
   ['Black', 'White', 'Red'].forEach((tee) => {
     html += '<button class="chip ' + (state.tee === tee ? 'on' : '') + '" data-a="tee" data-v="' + tee + '" aria-label="Select ' + tee + ' tee">' + tee + (tee === 'Red' ? ' (L)' : '') + '</button>';
   });
   html += '</div>';
-  
-  html += '<div class="row"><span class="m">Players</span>';
+  return html;
+}
+
+function setupPlayers() {
+  let html = '<div class="row"><span class="m">Players</span>';
   for (let i = 1; i <= 4; i++) {
     html += '<button class="chip ' + (state.n === i ? 'on' : '') + '" data-a="n" data-v="' + i + '" aria-label="Set number of players to ' + i + '">' + i + '</button>';
   }
@@ -316,7 +319,7 @@ function setup() {
 
 function play() {
   const holeIndex = state.hole;
-  let html = setup();
+  let html = setupTee();
 
   html += '<div class="hole">';
   html += '<button data-a="prev" aria-label="Previous hole">‹</button>';
@@ -337,11 +340,14 @@ function play() {
 
   html += '<button class="act" data-a="finish">Finish &amp; save round</button>';
   html += '<button class="act g" data-a="clear">Clear scores</button>';
+  
+  html += setupPlayers();
+  
   return html;
 }
 
 function card() {
-  let html = setup() + '<div class="w"><table><tr><th>Hole</th><th>Par</th><th>SI</th><th>' + state.tee + '</th>';
+  let html = setupTee() + '<div class="w"><table><tr><th>Hole</th><th>Par</th><th>SI</th><th>' + state.tee + '</th>';
 
   for (let playerIndex = 0; playerIndex < state.n; playerIndex++) {
     html += '<th>' + escapeHtml(getPlayerName(playerIndex)) + '</th>';
@@ -368,7 +374,11 @@ function card() {
     if (holeIndex === 17) html += subtotalRow('In', 9, 18) + subtotalRow('Total', 0, 18);
   }
 
-  return html + '</table></div><button class="act" data-a="finish">Finish &amp; save round</button>';
+  html += '</table></div><button class="act" data-a="finish">Finish &amp; save round</button>';
+  
+  html += setupPlayers();
+  
+  return html;
 }
 
 function roundsView() {
