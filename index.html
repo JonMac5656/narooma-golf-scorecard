@@ -1,563 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Narooma Golf Course Scorecard & Stats</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    /* iOS Safari UI Frame Simulation */
-    .safari-shell {
-      max-width: 430px;
-      margin: 0 auto;
-      background: #0f172a;
-      border-radius: 40px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 12px #1e293b;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 92vh;
-      max-height: 880px;
-      position: relative;
-    }
-    
-    .status-bar {
-      height: 44px;
-      padding: 0 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #f8fafc;
-      background: #0f172a;
-      z-index: 20;
-    }
-
-    .safari-address-bar {
-      background: #1e293b;
-      border-radius: 12px;
-      padding: 6px 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 13px;
-      color: #94a3b8;
-      margin: 0 16px 8px 16px;
-    }
-
-    .app-content::-webkit-scrollbar {
-      width: 4px;
-    }
-    .app-content::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 4px;
-    }
-
-    .score-btn {
-      touch-action: manipulation;
-      transition: all 0.1s ease;
-    }
-    .score-btn:active {
-      transform: scale(0.92);
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Narooma Golf Scorecard</title>
+<style>
+:root{--bg:#f7f8f5;--fg:#1c2b22;--mut:#6b7a70;--line:#d5dcd3;--hd:#1f5c3a;--hdfg:#fff;--sub:#e7eee6;--in:#fff;--bad:#b3402f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a15;--fg:#e6eee8;--mut:#93a39a;--line:#2b3a31;--hd:#2e7d52;--sub:#1c2922;--in:#18231c;--bad:#e0705f}}
+:root[data-theme="dark"]{--bg:#121a15;--fg:#e6eee8;--mut:#93a39a;--line:#2b3a31;--hd:#2e7d52;--sub:#1c2922;--in:#18231c;--bad:#e0705f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{background:var(--hd);color:#fff;padding:12px 16px 0}
+h1{font-size:18px;margin:0 0 8px}
+nav{display:flex;gap:4px}
+nav button{flex:1;background:transparent;color:#fffc;border:0;border-bottom:3px solid transparent;padding:8px;font:inherit;cursor:pointer}
+nav button.on{color:#fff;border-bottom-color:#fff;font-weight:600}
+main{max-width:640px;margin:0 auto;padding:14px 16px 40px}
+button{font:inherit;color:var(--fg)}
+.row{display:flex;gap:6px;margin-bottom:12px;align-items:center}
+.chip{flex:1;padding:8px 4px;border:1px solid var(--line);background:var(--in);border-radius:8px;cursor:pointer}
+.chip.on{background:var(--hd);color:#fff;border-color:var(--hd)}
+.hole{display:flex;align-items:center;justify-content:space-between;background:var(--sub);border-radius:12px;padding:10px;margin-bottom:12px}
+.hole .c{text-align:center}
+.hole b{font-size:26px;display:block;line-height:1.1}
+.hole span{color:var(--mut);font-size:13px}
+.hole button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:var(--in);font-size:20px;cursor:pointer}
+.pl{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:10px 0}
+.pl input.nm{flex:1;min-width:0;background:transparent;border:0;color:var(--fg);font:inherit;font-weight:600}
+.pl .tt{font-size:12px;color:var(--mut);width:70px;text-align:right}
+.pl .sc{width:40px;text-align:center;font-size:24px;font-weight:700}
+.pl button{width:46px;height:46px;border-radius:10px;border:1px solid var(--line);background:var(--in);font-size:22px;cursor:pointer}
+.act{display:block;width:100%;margin-top:14px;padding:12px;border-radius:10px;border:0;background:var(--hd);color:#fff;cursor:pointer;font-weight:600}
+.act.g{background:var(--in);color:var(--fg);border:1px solid var(--line)}
+.w{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:420px}
+th,td{border-bottom:1px solid var(--line);padding:5px 3px;text-align:center}
+th{background:var(--hd);color:#fff;font-size:13px}
+tr.t td{background:var(--sub);font-weight:600}
+td input{width:42px;padding:5px 2px;text-align:center;border:1px solid var(--line);border-radius:6px;background:var(--in);color:var(--fg);font:inherit}
+.m{color:var(--mut)}
+.rd{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;background:var(--in)}
+.rd .h{display:flex;justify-content:space-between;color:var(--mut);font-size:13px;margin-bottom:4px}
+.rd .h button{background:none;border:0;color:var(--bad);cursor:pointer}
+.n{font-size:12px;color:var(--mut);margin-top:14px}
+.g{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:6px}
+.k{border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--in)}
+.k b{font-size:22px;display:block}.k span{font-size:12px;color:var(--mut)}
+.bar{display:flex;align-items:center;gap:8px;margin:5px 0}.bar span.l{width:105px;font-size:13px}.bar i{display:block;height:14px;background:var(--hd);border-radius:4px;min-width:2px}.bar em{font-style:normal;font-size:12px;color:var(--mut)}
+.tr{display:flex;align-items:flex-end;gap:4px;height:100px}.tr div{flex:1;background:var(--hd);border-radius:4px 4px 0 0;color:#fff;font-size:11px;text-align:center;padding-top:2px}
+h2{font-size:15px;margin:18px 0 6px}
+.hl{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:4px 0}
+</style>
 </head>
-<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex items-center justify-center p-2 sm:p-4">
-
-  <!-- SAFARI FRAME -->
-  <div class="safari-shell border border-slate-800">
-    
-    <!-- iOS Status Bar -->
-    <div class="status-bar">
-      <span>9:41</span>
-      <div class="w-20 h-4 bg-black rounded-full absolute left-1/2 -translate-x-1/2 top-2"></div>
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-signal text-xs"></i>
-        <i class="fa-solid fa-wifi text-xs"></i>
-        <i class="fa-solid fa-battery-full text-xs"></i>
-      </div>
-    </div>
-
-    <!-- Safari Address Bar -->
-    <div class="safari-address-bar">
-      <div class="flex items-center gap-2 text-slate-400">
-        <span class="text-xs font-bold bg-slate-700 px-1.5 py-0.5 rounded text-slate-200">aA</span>
-        <i class="fa-solid fa-lock text-xs text-emerald-400"></i>
-      </div>
-      <span class="font-medium text-slate-200 text-xs tracking-wide truncate max-w-[180px]">narooma.golf/scorecard</span>
-      <button id="refreshBtn" onclick="location.reload()" class="text-slate-400 hover:text-slate-200">
-        <i class="fa-solid fa-rotate-right text-xs"></i>
-      </button>
-    </div>
-
-    <!-- MAIN APP CONTAINER -->
-    <div class="app-content flex-1 overflow-y-auto px-4 pb-20 pt-2 space-y-4">
-      
-      <!-- Header Banner -->
-      <div class="bg-gradient-to-r from-emerald-900 to-teal-900 border border-emerald-700/50 rounded-2xl p-4 shadow-lg">
-        <div class="flex justify-between items-start">
-          <div>
-            <h1 class="text-xl font-black tracking-tight text-white flex items-center gap-2">
-              <i class="fa-solid fa-flag-checkered text-emerald-400"></i> Narooma Golf Course
-            </h1>
-            <p class="text-xs text-emerald-200/80 mt-0.5">NSW, Australia • Par 72</p>
-          </div>
-          <span id="saveBadge" class="bg-emerald-500/20 text-emerald-300 text-[10px] font-semibold px-2 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1">
-            <i class="fa-solid fa-cloud-arrow-up text-[10px]"></i> Auto-Saved
-          </span>
-        </div>
-
-        <!-- Setup Form -->
-        <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
-          <div>
-            <label class="block text-emerald-200/70 text-[10px] uppercase font-bold tracking-wider mb-1">Player Name</label>
-            <input type="text" id="playerName" value="Golfer 1" onchange="saveState()" class="w-full bg-slate-900/80 border border-emerald-700/60 rounded-lg px-2.5 py-1.5 text-white font-medium focus:outline-none focus:border-emerald-400">
-          </div>
-          <div>
-            <label class="block text-emerald-200/70 text-[10px] uppercase font-bold tracking-wider mb-1">Daily Handicap</label>
-            <input type="number" id="handicap" value="18" min="0" max="54" onchange="updateCalculations()" class="w-full bg-slate-900/80 border border-emerald-700/60 rounded-lg px-2.5 py-1.5 text-white font-medium focus:outline-none focus:border-emerald-400">
-          </div>
-        </div>
-
-        <!-- Tee Selector -->
-        <div class="mt-3">
-          <label class="block text-emerald-200/70 text-[10px] uppercase font-bold tracking-wider mb-1">Tee Set</label>
-          <div class="grid grid-cols-3 gap-1.5 bg-slate-900/60 p-1 rounded-xl border border-emerald-800/40">
-            <button onclick="setTee('blue')" id="teeBlue" class="tee-btn text-xs py-1 rounded-lg font-bold transition text-slate-400">Blue (6,122m)</button>
-            <button onclick="setTee('white')" id="teeWhite" class="tee-btn text-xs py-1 rounded-lg font-bold transition text-slate-400">White (5,865m)</button>
-            <button onclick="setTee('red')" id="teeRed" class="tee-btn text-xs py-1 rounded-lg font-bold transition text-slate-400">Red (5,232m)</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Live Summary Bar -->
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-3 grid grid-cols-4 gap-2 text-center shadow-md">
-        <div>
-          <div class="text-[10px] uppercase font-bold text-slate-400">Gross</div>
-          <div id="statGross" class="text-base font-black text-white">72</div>
-        </div>
-        <div>
-          <div class="text-[10px] uppercase font-bold text-slate-400">Stableford</div>
-          <div id="statPoints" class="text-base font-black text-amber-400">36 pts</div>
-        </div>
-        <div>
-          <div class="text-[10px] uppercase font-bold text-slate-400">FIR %</div>
-          <div id="statFIR" class="text-base font-black text-sky-400">0%</div>
-        </div>
-        <div>
-          <div class="text-[10px] uppercase font-bold text-slate-400">GIR %</div>
-          <div id="statGIR" class="text-base font-black text-emerald-400">0%</div>
-        </div>
-      </div>
-
-      <!-- Navigation Tabs -->
-      <div class="flex bg-slate-900/80 p-1 rounded-xl border border-slate-800 text-xs font-bold">
-        <button onclick="setTab('out')" id="tabOut" class="flex-1 py-1.5 rounded-lg text-slate-400 transition">Front 9 (Out)</button>
-        <button onclick="setTab('in')" id="tabIn" class="flex-1 py-1.5 rounded-lg text-slate-400 transition">Back 9 (In)</button>
-        <button onclick="setTab('summary')" id="tabSummary" class="flex-1 py-1.5 rounded-lg text-slate-400 transition">Summary & Stats</button>
-      </div>
-
-      <!-- HOLE SCORECARDS LIST -->
-      <div id="holesList" class="space-y-2.5">
-        <!-- Rendered via JS -->
-      </div>
-
-      <!-- SUMMARY TAB CONTENT -->
-      <div id="summaryView" class="hidden space-y-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
-          <h3 class="text-sm font-bold text-slate-200 border-b border-slate-800 pb-2 flex justify-between">
-            <span>Round & Advanced Stats</span>
-            <span id="summaryTeeBadge" class="text-xs font-normal text-slate-400">White Tees</span>
-          </h3>
-          
-          <div class="space-y-2 text-xs">
-            <div class="flex justify-between py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Total Score (Gross / Net)</span>
-              <span class="font-bold text-white"><span id="sumTotalGross">0</span> / <span id="sumTotalNet" class="text-emerald-400">0</span></span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Total Stableford Points</span>
-              <span class="font-bold text-amber-400" id="sumTotalPoints">0 pts</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Total Putts (Avg / Hole)</span>
-              <span class="font-bold text-purple-400"><span id="sumTotalPutts">0</span> (<span id="sumAvgPutts">0.0</span>)</span>
-            </div>
-            <div class="flex justify-between py-1 border-b border-slate-800/60">
-              <span class="text-slate-400">Fairways in Regulation (FIR)</span>
-              <span class="font-bold text-sky-400" id="sumFIRCount">0/0 (0%)</span>
-            </div>
-            <div class="flex justify-between py-1">
-              <span class="text-slate-400">Greens in Regulation (GIR)</span>
-              <span class="font-bold text-emerald-400" id="sumGIRCount">0/0 (0%)</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- GOOGLE SHEETS UPLOAD BUTTON -->
-        <button onclick="uploadToGoogleSheet()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-black py-3 rounded-xl text-xs transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/50">
-          <i class="fa-solid fa-file-excel text-sm"></i> Upload Round Data to Google Sheet
-        </button>
-
-        <div id="toast" class="hidden bg-emerald-900/90 border border-emerald-500/50 text-emerald-200 p-3 rounded-xl text-xs text-center space-y-1">
-          <div class="font-bold flex items-center justify-center gap-1.5">
-            <i class="fa-solid fa-circle-check text-emerald-400"></i> Round & Stats Data Copied!
-          </div>
-          <div class="text-[11px] text-emerald-300/80">
-            Open your Google Sheet and paste into a new row.
-          </div>
-        </div>
-
-        <button onclick="resetScorecard()" class="w-full bg-rose-950/40 hover:bg-rose-900/60 border border-rose-800/50 text-rose-300 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-trash-can"></i> Reset Scorecard
-        </button>
-      </div>
-
-    </div>
-
-    <!-- Safari Bottom Controls -->
-    <div class="bg-slate-900 border-t border-slate-800 px-6 py-3 flex justify-between items-center text-slate-400 z-20">
-      <button class="hover:text-white"><i class="fa-solid fa-chevron-left"></i></button>
-      <button class="hover:text-white"><i class="fa-solid fa-chevron-right"></i></button>
-      <button class="hover:text-white"><i class="fa-solid fa-arrow-up-from-bracket"></i></button>
-      <button class="hover:text-white"><i class="fa-solid fa-book-open"></i></button>
-      <button class="hover:text-white"><i class="fa-regular fa-copy"></i></button>
-    </div>
-
-  </div>
-
-  <script>
-    const holesData = [
-      { num: 1, name: "Sea View", par: 4, index: 11, blue: 338, white: 325, red: 305 },
-      { num: 2, name: "Blowhole", par: 4, index: 5, blue: 356, white: 342, red: 312 },
-      { num: 3, name: "Sea Cliff", par: 3, index: 17, blue: 141, white: 129, red: 100 },
-      { num: 4, name: "Cliff Edge", par: 4, index: 1, blue: 382, white: 368, red: 320 },
-      { num: 5, name: "Glasshouse", par: 4, index: 13, blue: 340, white: 328, red: 290 },
-      { num: 6, name: "Whale Way", par: 5, index: 7, blue: 465, white: 450, red: 410 },
-      { num: 7, name: "The Inlet", par: 4, index: 3, blue: 360, white: 345, red: 300 },
-      { num: 8, name: "Pacific", par: 5, index: 9, blue: 480, white: 462, red: 425 },
-      { num: 9, name: "Clubhouse Return", par: 3, index: 15, blue: 155, white: 142, red: 125 },
-      { num: 10, name: "Pine Valley", par: 4, index: 12, blue: 345, white: 330, red: 295 },
-      { num: 11, name: "Dogleg South", par: 4, index: 4, blue: 370, white: 355, red: 315 },
-      { num: 12, name: "Lakeview", par: 3, index: 18, blue: 165, white: 150, red: 130 },
-      { num: 13, name: "The Chute", par: 4, index: 2, blue: 360, white: 348, red: 310 },
-      { num: 14, name: "Scrub Alley", par: 4, index: 14, blue: 330, white: 318, red: 280 },
-      { num: 15, name: "Monster Par 5", par: 5, index: 8, blue: 490, white: 475, red: 430 },
-      { num: 16, name: "The Bend", par: 4, index: 6, blue: 385, white: 368, red: 325 },
-      { num: 17, name: "Gum Trees", par: 3, index: 16, blue: 175, white: 160, red: 140 },
-      { num: 18, name: "Home Hole", par: 5, index: 10, blue: 485, white: 470, red: 420 }
-    ];
-
-    let currentTee = 'white';
-    let currentTab = 'out';
-    let playerScores = Array(18).fill(null);
-    let playerPutts = Array(18).fill(2); // Default 2 putts
-    let playerFIR = Array(18).fill(null); // 'hit', 'left', 'right', 'miss'
-
-    function initApp() {
-      const saved = localStorage.getItem('narooma_stats_app_state');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          if (parsed.playerName) document.getElementById('playerName').value = parsed.playerName;
-          if (parsed.handicap !== undefined) document.getElementById('handicap').value = parsed.handicap;
-          if (parsed.currentTee) currentTee = parsed.currentTee;
-          if (parsed.playerScores) playerScores = parsed.playerScores;
-          if (parsed.playerPutts) playerPutts = parsed.playerPutts;
-          if (parsed.playerFIR) playerFIR = parsed.playerFIR;
-        } catch (e) {
-          console.error("Error loading saved state", e);
-        }
-      }
-      setTee(currentTee, false);
-      setTab(currentTab);
-      updateCalculations();
-    }
-
-    function saveState() {
-      const state = {
-        playerName: document.getElementById('playerName').value,
-        handicap: parseInt(document.getElementById('handicap').value) || 0,
-        currentTee: currentTee,
-        playerScores: playerScores,
-        playerPutts: playerPutts,
-        playerFIR: playerFIR
-      };
-      localStorage.setItem('narooma_stats_app_state', JSON.stringify(state));
-    }
-
-    function setTee(tee, triggerSave = true) {
-      currentTee = tee;
-      ['blue', 'white', 'red'].forEach(t => {
-        const btn = document.getElementById('tee' + t.charAt(0).toUpperCase() + t.slice(1));
-        if (t === tee) {
-          btn.className = "tee-btn text-xs py-1 rounded-lg font-bold bg-emerald-500 text-slate-950 shadow";
-        } else {
-          btn.className = "tee-btn text-xs py-1 rounded-lg font-bold text-slate-400 hover:text-white";
-        }
-      });
-      renderHoles();
-      if (triggerSave) saveState();
-    }
-
-    function setTab(tab) {
-      currentTab = tab;
-      ['Out', 'In', 'Summary'].forEach(t => {
-        const btn = document.getElementById('tab' + t);
-        if (t.toLowerCase() === tab) {
-          btn.className = "flex-1 py-1.5 rounded-lg font-bold bg-slate-800 text-white shadow";
-        } else {
-          btn.className = "flex-1 py-1.5 rounded-lg font-bold text-slate-400 hover:text-slate-200";
-        }
-      });
-
-      const holesList = document.getElementById('holesList');
-      const summaryView = document.getElementById('summaryView');
-
-      if (tab === 'summary') {
-        holesList.classList.add('hidden');
-        summaryView.classList.remove('hidden');
-      } else {
-        holesList.classList.remove('hidden');
-        summaryView.classList.add('hidden');
-        renderHoles();
-      }
-    }
-
-    function getStrokesReceived(index, handicap) {
-      let strokes = Math.floor(handicap / 18);
-      const remainder = handicap % 18;
-      if (index <= remainder) strokes += 1;
-      return strokes;
-    }
-
-    function getStablefordPoints(par, index, handicap, score) {
-      if (!score || score <= 0) return 0;
-      const strokesReceived = getStrokesReceived(index, handicap);
-      const netPar = par + strokesReceived;
-      const points = netPar - score + 2;
-      return Math.max(0, points);
-    }
-
-    function renderHoles() {
-      const container = document.getElementById('holesList');
-      container.innerHTML = '';
-
-      const startIndex = currentTab === 'out' ? 0 : 9;
-      const endIndex = currentTab === 'out' ? 9 : 18;
-      const handicap = parseInt(document.getElementById('handicap').value) || 0;
-
-      for (let i = startIndex; i < endIndex; i++) {
-        const h = holesData[i];
-        const score = playerScores[i];
-        const putts = playerPutts[i];
-        const fir = playerFIR[i];
-        const dist = h[currentTee];
-        const strokes = getStrokesReceived(h.index, handicap);
-        const pts = score ? getStablefordPoints(h.par, h.index, handicap, score) : 0;
-
-        // GIR Rule: (Score - Putts) <= (Par - 2)
-        const isGIR = score !== null ? (score - putts) <= (h.par - 2) : false;
-
-        const card = document.createElement('div');
-        card.className = "bg-slate-900 border border-slate-800 rounded-2xl p-3 shadow-sm space-y-2.5";
-        card.innerHTML = `
-          <!-- Hole Header -->
-          <div class="flex justify-between items-center">
-            <div class="flex items-center gap-2">
-              <span class="w-6 h-6 rounded-full bg-slate-800 text-slate-300 text-xs font-bold flex items-center justify-center">${h.num}</span>
-              <div>
-                <h4 class="text-xs font-bold text-white">${h.name}</h4>
-                <p class="text-[10px] text-slate-400">Par ${h.par} • ${dist}m • Index ${h.index}</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-              ${score !== null ? `
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${isGIR ? 'bg-emerald-950 text-emerald-400 border border-emerald-700/50' : 'bg-slate-800 text-slate-500'}">
-                  ${isGIR ? 'GIR ✓' : 'GIR ✗'}
-                </span>
-              ` : ''}
-              <span class="text-xs font-black ${pts > 2 ? 'text-amber-400' : 'text-slate-300'}">${score ? pts + ' pts' : '-'}</span>
-            </div>
-          </div>
-
-          <!-- Score & Putts Controls -->
-          <div class="grid grid-cols-2 gap-2">
-            <!-- Gross Score -->
-            <div class="bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-center">
-              <div class="text-[9px] uppercase font-bold text-slate-400 mb-1">Gross Score</div>
-              <div class="flex items-center justify-between gap-1">
-                <button onclick="changeScore(${i}, -1)" class="score-btn w-7 h-7 rounded-lg bg-slate-800 text-white font-bold text-sm flex items-center justify-center">-</button>
-                <span class="text-lg font-black ${score ? (score < h.par ? 'text-emerald-400' : score > h.par ? 'text-rose-400' : 'text-white') : 'text-slate-600'}">
-                  ${score || h.par}
-                </span>
-                <button onclick="changeScore(${i}, 1)" class="score-btn w-7 h-7 rounded-lg bg-slate-800 text-white font-bold text-sm flex items-center justify-center">+</button>
-              </div>
-            </div>
-
-            <!-- Putts Counter -->
-            <div class="bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-center">
-              <div class="text-[9px] uppercase font-bold text-purple-400 mb-1">Putts</div>
-              <div class="flex items-center justify-between gap-1">
-                <button onclick="changePutts(${i}, -1)" class="score-btn w-7 h-7 rounded-lg bg-slate-800 text-white font-bold text-sm flex items-center justify-center">-</button>
-                <span class="text-lg font-black text-purple-300">${putts}</span>
-                <button onclick="changePutts(${i}, 1)" class="score-btn w-7 h-7 rounded-lg bg-slate-800 text-white font-bold text-sm flex items-center justify-center">+</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- FIR Selector (Par 4 & 5 only) -->
-          ${h.par > 3 ? `
-            <div class="flex items-center justify-between bg-slate-950/60 p-1.5 rounded-xl border border-slate-800/80 text-[10px]">
-              <span class="text-slate-400 font-bold px-1">Fairway (FIR):</span>
-              <div class="flex gap-1">
-                <button onclick="setFIR(${i}, 'hit')" class="px-2 py-0.5 rounded font-bold transition ${fir === 'hit' ? 'bg-sky-500 text-slate-950' : 'bg-slate-800 text-slate-400'}">Hit ✓</button>
-                <button onclick="setFIR(${i}, 'left')" class="px-2 py-0.5 rounded font-bold transition ${fir === 'left' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'}">Left 🠄</button>
-                <button onclick="setFIR(${i}, 'right')" class="px-2 py-0.5 rounded font-bold transition ${fir === 'right' ? 'bg-amber-500 text-slate-950' : 'bg-slate-800 text-slate-400'}">Right 🠆</button>
-              </div>
-            </div>
-          ` : `
-            <div class="text-[10px] text-slate-500 text-center italic bg-slate-950/30 py-1 rounded-lg">Par 3 — FIR Not Applicable</div>
-          `}
-        `;
-        container.appendChild(card);
-      }
-    }
-
-    function changeScore(holeIndex, delta) {
-      const h = holesData[holeIndex];
-      let current = playerScores[holeIndex];
-      if (current === null) current = h.par + (delta > 0 ? 1 : -1);
-      else current = Math.max(1, current + delta);
-      
-      playerScores[holeIndex] = current;
-      renderHoles();
-      updateCalculations();
-      saveState();
-    }
-
-    function changePutts(holeIndex, delta) {
-      playerPutts[holeIndex] = Math.max(0, playerPutts[holeIndex] + delta);
-      renderHoles();
-      updateCalculations();
-      saveState();
-    }
-
-    function setFIR(holeIndex, status) {
-      playerFIR[holeIndex] = playerFIR[holeIndex] === status ? null : status;
-      renderHoles();
-      updateCalculations();
-      saveState();
-    }
-
-    function updateCalculations() {
-      const handicap = parseInt(document.getElementById('handicap').value) || 0;
-      let totalGross = 0;
-      let totalPoints = 0;
-      let totalPutts = 0;
-      let holesPlayed = 0;
-      let firHits = 0;
-      let firEligible = 0;
-      let girHits = 0;
-
-      playerScores.forEach((s, idx) => {
-        if (s !== null) {
-          const h = holesData[idx];
-          const putts = playerPutts[idx];
-          totalGross += s;
-          totalPutts += putts;
-          holesPlayed++;
-          totalPoints += getStablefordPoints(h.par, h.index, handicap, s);
-
-          // GIR Check
-          if ((s - putts) <= (h.par - 2)) girHits++;
-
-          // FIR Check (Par 4 & 5)
-          if (h.par > 3) {
-            firEligible++;
-            if (playerFIR[idx] === 'hit') firHits++;
-          }
-        }
-      });
-
-      const firPct = firEligible > 0 ? Math.round((firHits / firEligible) * 100) : 0;
-      const girPct = holesPlayed > 0 ? Math.round((girHits / holesPlayed) * 100) : 0;
-      const avgPutts = holesPlayed > 0 ? (totalPutts / holesPlayed).toFixed(1) : "0.0";
-
-      // Live Stats Bar Updates
-      document.getElementById('statGross').textContent = holesPlayed > 0 ? totalGross : '72';
-      document.getElementById('statPoints').textContent = `${totalPoints} pts`;
-      document.getElementById('statFIR').textContent = `${firPct}%`;
-      document.getElementById('statGIR').textContent = `${girPct}%`;
-
-      // Summary Tab Updates
-      document.getElementById('sumTotalGross').textContent = totalGross;
-      document.getElementById('sumTotalNet').textContent = totalGross > 0 ? totalGross - Math.round(handicap * (holesPlayed / 18)) : 0;
-      document.getElementById('sumTotalPoints').textContent = `${totalPoints} pts`;
-      document.getElementById('sumTotalPutts').textContent = totalPutts;
-      document.getElementById('sumAvgPutts').textContent = avgPutts;
-      document.getElementById('sumFIRCount').textContent = `${firHits}/${firEligible} (${firPct}%)`;
-      document.getElementById('sumGIRCount').textContent = `${girHits}/${holesPlayed} (${girPct}%)`;
-
-      saveState();
-    }
-
-    function uploadToGoogleSheet() {
-      const date = new Date().toLocaleDateString();
-      const player = document.getElementById('playerName').value || "Golfer 1";
-      const handicap = document.getElementById('handicap').value || "0";
-      const tee = currentTee.toUpperCase();
-
-      let totalGross = 0;
-      let totalPutts = 0;
-      let totalPoints = 0;
-      let firHits = 0, firEligible = 0, girHits = 0;
-
-      const scoreRow = playerScores.map((s, idx) => {
-        const h = holesData[idx];
-        const val = s !== null ? s : h.par;
-        const putts = playerPutts[idx];
-        totalGross += val;
-        totalPutts += putts;
-        totalPoints += getStablefordPoints(h.par, h.index, parseInt(handicap), val);
-
-        if ((val - putts) <= (h.par - 2)) girHits++;
-        if (h.par > 3) {
-          firEligible++;
-          if (playerFIR[idx] === 'hit') firHits++;
-        }
-        return val;
-      });
-
-      const netScore = totalGross - parseInt(handicap);
-      const firPct = firEligible > 0 ? `${Math.round((firHits / firEligible) * 100)}%` : '0%';
-      const girPct = `${Math.round((girHits / 18) * 100)}%`;
-
-      // Formatted Tab-Separated Row including Stats
-      const rowData = [date, player, handicap, tee, totalGross, netScore, totalPoints, totalPutts, firPct, girPct, ...scoreRow].join("\t");
-
-      navigator.clipboard.writeText(rowData).then(() => {
-        const toast = document.getElementById('toast');
-        toast.classList.remove('hidden');
-        setTimeout(() => toast.classList.add('hidden'), 5000);
-      });
-    }
-
-    function resetScorecard() {
-      if (confirm("Reset all scores, putts, and FIR stats for this round?")) {
-        playerScores = Array(18).fill(null);
-        playerPutts = Array(18).fill(2);
-        playerFIR = Array(18).fill(null);
-        setTab('out');
-        updateCalculations();
-        saveState();
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', initApp);
-  </script>
+<body>
+<header><h1>⛳ Narooma Golf Club · Par 72</h1><nav id="nav"></nav></header>
+<main id="app"></main>
+<script>
+var par=[4,4,3,4,5,4,4,4,3,4,5,4,4,3,4,5,3,5];
+var D={Black:[398,330,141,368,458,311,424,317,193,320,460,333,369,169,344,427,129,450],
+White:[393,330,132,360,448,301,416,308,184,310,448,323,360,162,325,424,121,445],
+Red:[358,247,109,313,436,291,389,226,144,250,402,280,319,160,296,401,120,411]};
+var SIb=[1,10,11,7,18,15,4,16,3,8,12,9,2,6,5,14,17,13];
+var SI={Black:SIb,White:SIb,Red:[18,8,12,3,14,6,10,1,16,5,11,2,15,7,13,4,17,9]};
+var S={tee:"White",n:2,names:["","","",""],sc:[[],[],[],[]],hole:0,view:"play"};
+var R=[];
+try{var a=JSON.parse(localStorage.getItem("ng_state"));if(a)S=a;var b=JSON.parse(localStorage.getItem("ng_rounds"));if(b)R=b}catch(e){}
+function save(){try{localStorage.setItem("ng_state",JSON.stringify(S));localStorage.setItem("ng_rounds",JSON.stringify(R))}catch(e){}}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;")}
+function nm(p){return S.names[p]||"Player "+(p+1)}
+function sum(a,f,t){var s=0;for(var i=f;i<t;i++)s+=a[i]||0;return s}
+function T(arr,f,t){var s=0,pp=0;for(var i=f;i<t;i++){var v=parseInt(arr[i]);if(v>0){s+=v;pp+=par[i]}}return[s,pp]}
+function fmt(r){if(!r[0])return"–";var d=r[0]-r[1];return r[0]+" ("+(d>0?"+"+d:d===0?"E":d)+")"}
+function nav(){var h="";[["play","Play"],["card","Card"],["rounds","Rounds ("+R.length+")"],["stats","Stats"]].forEach(function(v){h+='<button data-a="view" data-v="'+v[0]+'" class="'+(S.view==v[0]?"on":"")+'">'+v[1]+"</button>"});document.getElementById("nav").innerHTML=h}
+function setup(){var h='<div class="row">';["Black","White","Red"].forEach(function(k){h+='<button class="chip '+(S.tee==k?"on":"")+'" data-a="tee" data-v="'+k+'">'+k+(k=="Red"?" (L)":"")+"<br><small>"+sum(D[k],0,18)+" m</small></button>"});h+="</div>";
+h+='<div class="row"><span class="m">Players</span>';for(var i=1;i<=4;i++)h+='<button class="chip '+(S.n==i?"on":"")+'" data-a="n" data-v="'+i+'">'+i+"</button>";return h+"</div>"}
+function play(){var i=S.hole,h=setup();
+h+='<div class="hole"><button data-a="prev">‹</button><div class="c"><b>Hole '+(i+1)+'</b><span>Par '+par[i]+" · "+D[S.tee][i]+" m · SI "+SI[S.tee][i]+'</span></div><button data-a="next">›</button></div>';
+for(var p=0;p<S.n;p++){var v=S.sc[p][i];
+h+='<div class="pl"><input class="nm" data-n="'+p+'" placeholder="Player '+(p+1)+'" value="'+esc(S.names[p])+'"><span class="tt">'+fmt(T(S.sc[p],0,18))+'</span><button data-a="dec" data-p="'+p+'">−</button><span class="sc">'+(v||"·")+'</span><button data-a="inc" data-p="'+p+'">+</button></div>'}
+h+='<button class="act" data-a="finish">Finish &amp; save round</button><button class="act g" data-a="clear">Clear scores</button>';return h}
+function card(){var h=setup()+'<div class="w"><table><tr><th>Hole</th><th>Par</th><th>SI</th><th>'+S.tee+"</th>";
+for(var p=0;p<S.n;p++)h+="<th>"+esc(nm(p))+"</th>";h+="</tr>";
+function sub(l,f,t){var r='<tr class="t"><td>'+l+"</td><td>"+sum(par,f,t)+"</td><td></td><td>"+sum(D[S.tee],f,t)+"</td>";for(var p=0;p<S.n;p++)r+="<td>"+fmt(T(S.sc[p],f,t))+"</td>";return r+"</tr>"}
+for(var i=0;i<18;i++){h+="<tr><td>"+(i+1)+"</td><td>"+par[i]+'</td><td class="m">'+SI[S.tee][i]+"</td><td>"+D[S.tee][i]+"</td>";
+for(var p=0;p<S.n;p++)h+='<td><input type="number" inputmode="numeric" min="1" max="20" data-p="'+p+'" data-h="'+i+'" value="'+(S.sc[p][i]||"")+'"></td>';h+="</tr>";
+if(i==8)h+=sub("Out",0,9);if(i==17){h+=sub("In",9,18)+sub("Total",0,18)}}
+return h+'</table></div><button class="act" data-a="finish">Finish &amp; save round</button>'}
+function rounds(){if(!R.length)return'<p class="m">No saved rounds yet. Finish a round to save it here.</p>';var h="";
+for(var k=R.length-1;k>=0;k--){var r=R[k];h+='<div class="rd"><div class="h"><span>'+esc(r.d)+" · "+r.tee+'</span><button data-a="del" data-v="'+k+'">Delete</button></div>';
+for(var p=0;p<r.names.length;p++)h+='<div style="display:flex;justify-content:space-between"><b>'+esc(r.names[p])+"</b><span>Out "+T(r.sc[p],0,9)[0]+" · In "+T(r.sc[p],9,18)[0]+" · <b>"+fmt(T(r.sc[p],0,18))+"</b></span></div>";h+="</div>"}return h}
+function allNames(){var n=[];R.forEach(function(r){r.names.forEach(function(x){if(n.indexOf(x)<0)n.push(x)})});return n}
+function sg(d){return(d>=0?"+":"")+d.toFixed(2)}
+function stats(){
+if(!R.length)return'<p class="m">Save a round to see stats.</p>';
+var names=allNames();if(names.indexOf(S.sp)<0)S.sp=names[0];
+var h='<div class="row" style="flex-wrap:wrap">';
+names.forEach(function(n,i){h+='<button class="chip '+(n==S.sp?"on":"")+'" data-a="sp" data-v="'+i+'">'+esc(n)+"</button>"});h+="</div>";
+var rs=[],g=[],dist=[0,0,0,0,0],pt={3:[0,0],4:[0,0],5:[0,0]},hd=[],bf=0,bb=0,i;
+for(i=0;i<18;i++)hd.push([0,0]);
+R.forEach(function(r){var k=r.names.indexOf(S.sp);if(k>=0)rs.push(r.sc[k])});
+rs.forEach(function(sc){
+var t=T(sc,0,18),f=T(sc,0,9),b=T(sc,9,18);
+if(t[1]==72)g.push(t[0]);
+if(f[1]==35&&(!bf||f[0]<bf))bf=f[0];
+if(b[1]==37&&(!bb||b[0]<bb))bb=b[0];
+for(var j=0;j<18;j++){var v=parseInt(sc[j]);if(!(v>0))continue;var d=v-par[j];
+dist[d<=-2?0:d==-1?1:d==0?2:d==1?3:4]++;pt[par[j]][0]+=d;pt[par[j]][1]++;hd[j][0]+=d;hd[j][1]++}});
+var mn=g.length?Math.min.apply(null,g):0,mx=g.length?Math.max.apply(null,g):0,av=g.length?g.reduce(function(a,b){return a+b},0)/g.length:0;
+function tile(l,v){return'<div class="k"><b>'+v+"</b><span>"+l+"</span></div>"}
+h+='<div class="g">'+tile("Rounds",rs.length)+tile("Best 18",mn||"–")+tile("Average 18",g.length?av.toFixed(1):"–")+tile("Worst 18",mx||"–")+tile("Best front 9",bf||"–")+tile("Best back 9",bb||"–")+"</div>";
+if(g.length)h+='<div class="m" style="font-size:13px">Average vs par: '+sg(av-72)+" (full 18-hole rounds only: "+g.length+")</div>";
+var tot=dist.reduce(function(a,b){return a+b},0);
+h+="<h2>Scoring</h2>";
+["Eagle or better","Birdie","Par","Bogey","Double or worse"].forEach(function(l,k){var pc=tot?dist[k]/tot*100:0;h+='<div class="bar"><span class="l">'+l+'</span><i style="width:'+pc*0.6+'%"></i><em>'+dist[k]+" · "+Math.round(pc)+"%</em></div>"});
+h+="<h2>Average vs par by hole type</h2>";
+[3,4,5].forEach(function(q){h+='<div class="hl"><span>Par '+q+'s</span><b>'+(pt[q][1]?sg(pt[q][0]/pt[q][1]):"–")+"</b></div>"});
+var hs=[];hd.forEach(function(x,k){if(x[1])hs.push({k:k,a:x[0]/x[1]})});hs.sort(function(a,b){return b.a-a.a});
+function hl(a){return a.map(function(o){return'<div class="hl"><span>Hole '+(o.k+1)+' (par '+par[o.k]+')</span><b>'+sg(o.a)+"</b></div>"}).join("")}
+if(hs.length>=6){h+="<h2>Hardest holes</h2>"+hl(hs.slice(0,3))+"<h2>Best holes</h2>"+hl(hs.slice(-3).reverse())}
+if(g.length>1){var last=g.slice(-10),lo=Math.min.apply(null,last)-5,hi=Math.max.apply(null,last)+3;
+h+="<h2>Last "+last.length+" rounds (gross)</h2><div class=\"tr\">"+last.map(function(v){return'<div style="height:'+((v-lo)/(hi-lo)*100)+'%">'+v+"</div>"}).join("")+"</div>"}
+return h}
+function render(){nav();var a=document.getElementById("app");a.innerHTML=S.view=="play"?play():S.view=="card"?card():S.view=="stats"?stats():rounds();
+if(S.view=="play"||S.view=="card")a.insertAdjacentHTML("beforeend",'<div class="n">Pars, distances and stroke index from Golfify; other sites list longer yardages, so check the club\'s printed card if it matters.</div>')}
+document.addEventListener("click",function(e){var x=e.target.closest("[data-a]");if(!x)return;var a=x.getAttribute("data-a"),v=x.getAttribute("data-v"),p=x.getAttribute("data-p"),i=S.hole;
+if(a=="view")S.view=v;else if(a=="tee")S.tee=v;else if(a=="n")S.n=+v;
+else if(a=="prev")S.hole=(i+17)%18;else if(a=="next")S.hole=(i+1)%18;
+else if(a=="inc"){var c=S.sc[p][i];S.sc[p][i]=c?Math.min(20,c+1):par[i]}
+else if(a=="dec"){var c2=S.sc[p][i];S.sc[p][i]=c2?Math.max(1,c2-1):par[i]}
+else if(a=="clear"){S.sc=[[],[],[],[]];S.hole=0}
+else if(a=="finish"){var any=false;for(var q=0;q<S.n;q++)if(T(S.sc[q],0,18)[0])any=true;if(!any)return;
+R.push({d:new Date().toLocaleDateString("en-AU",{day:"numeric",month:"short",year:"numeric"}),tee:S.tee,names:S.names.slice(0,S.n).map(function(_,k){return nm(k)}),sc:S.sc.slice(0,S.n).map(function(s){return s.slice()})});
+S.sc=[[],[],[],[]];S.hole=0;S.view="rounds"}
+else if(a=="sp")S.sp=allNames()[+v];
+else if(a=="del")R.splice(+v,1);
+save();render()});
+document.addEventListener("change",function(e){var x=e.target;
+if(x.hasAttribute("data-n")){S.names[x.getAttribute("data-n")]=x.value;save();return}
+if(x.hasAttribute("data-h")){S.sc[x.getAttribute("data-p")][x.getAttribute("data-h")]=parseInt(x.value)||undefined;save();render()}});
+render();
+</script>
 </body>
 </html>
